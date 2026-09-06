@@ -409,19 +409,19 @@
     }
 
     .birthday-48-content {
-  opacity: 0;
-  transform: translateY(16px);
-  position: relative;
-  z-index: 1;
-}
+      position: relative;
+      z-index: 1;
+      opacity: 0;
+      transform: translateY(16px);
+    }
 
     .birthday-48-intro.is-showing .birthday-48-content {
       animation:
         birthday48ContentIn .8s
         cubic-bezier(.22,.61,.36,1)
-        forwards
+        forwards;
       opacity: 1;
-  transform: translateY(0);
+      transform: translateY(0);
     }
 
     .birthday-48-kicker {
@@ -1664,8 +1664,8 @@
 
 
 /* =========================================================
-   DESKTOP ALIGNMENT FIX
-   Keeps the mobile design untouched.
+   RESPONSIVE ALIGNMENT + MOBILE INTRO FIX
+   Keeps the original design intact while stabilizing the page.
 ========================================================= */
 
 @media (min-width: 900px) {
@@ -1679,9 +1679,9 @@
 
   .hero .chapter-inner {
     width: min(100%, 900px);
-    transform: none !important;
     margin-left: auto;
     margin-right: auto;
+    transform: none !important;
   }
 
   #chapterMemories .chapter-inner {
@@ -1690,9 +1690,9 @@
   }
 
   #chapterMemories .memory-stage {
-    transform: none !important;
     margin-left: auto;
     margin-right: auto;
+    transform: none !important;
   }
 
   #chapterMemories .memory-meta,
@@ -1721,20 +1721,42 @@
     margin-right: auto;
     transform: none !important;
   }
-
 }
-    /* MOBILE — keep the 48 moment visible */
+
 @media (max-width: 899px) {
+  .envelope-screen {
+    padding: 18px;
+  }
+
+  .birthday-48-intro {
+    display: grid;
+  }
+
   .birthday-48-intro.is-showing {
     opacity: 1 !important;
     visibility: visible !important;
-    display: flex !important;
+    display: grid !important;
   }
 
   .birthday-48-intro.is-showing .birthday-48-content {
     opacity: 1 !important;
     visibility: visible !important;
     transform: translateY(0) !important;
+  }
+
+  .birthday-48-kicker {
+    margin-bottom: 18px;
+    font-size: 8px;
+    letter-spacing: .2em;
+  }
+
+  .birthday-48-number {
+    font-size: clamp(92px, 31vw, 188px);
+  }
+
+  .birthday-48-name {
+    margin-top: 18px;
+    font-size: clamp(26px, 7vw, 36px);
   }
 }
   </style>
