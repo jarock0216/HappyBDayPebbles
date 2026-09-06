@@ -176,7 +176,7 @@
     .envelope-screen {
       position: fixed;
       inset: 0;
-      z-index: 50;
+      z-index: 110;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -188,6 +188,7 @@
           transparent 34%
         ),
         #180A29;
+      isolation: isolate;
     }
 
     .envelope-intro {
@@ -388,7 +389,7 @@
     .birthday-48-intro {
       position: fixed;
       inset: 0;
-      z-index: 120;
+      z-index: 130;
       display: grid;
       place-items: center;
       background:
@@ -401,11 +402,13 @@
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
+      isolation: isolate;
     }
 
     .birthday-48-intro.is-showing {
       opacity: 1;
       visibility: visible;
+      pointer-events: auto;
     }
 
     .birthday-48-content {
@@ -1110,6 +1113,9 @@
       cursor: pointer;
       touch-action: none;
       user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      -webkit-tap-highlight-color: transparent;
       box-shadow:
         0 20px 45px rgba(0,0,0,.25),
         0 0 0 0 rgba(243,198,107,.25);
@@ -3895,6 +3901,9 @@
         "wishButtonLabel"
       );
 
+    const OPEN_STATE_KEY =
+      "birthday-page-opened";
+
     const wishStatus =
       document.getElementById(
         "wishStatus"
@@ -4085,6 +4094,7 @@
     ) {
 
       event.preventDefault();
+      event.stopPropagation();
 
       if (
         wishCompleted ||
@@ -4192,7 +4202,20 @@
 
     wishButton.addEventListener(
       "pointerdown",
-      startWishHold
+      startWishHold,
+      {
+        passive: false
+      }
+    );
+
+    wishButton.addEventListener(
+      "touchstart",
+      event => {
+        event.preventDefault();
+      },
+      {
+        passive: false
+      }
     );
 
     wishButton.addEventListener(
@@ -4814,14 +4837,28 @@
         return;
       }
 
-      birthday48Intro.classList.add(
+      birthday48Intro.classList.remove(
         "is-showing"
       );
 
-      birthday48Intro.setAttribute(
-        "aria-hidden",
-        "false"
-      );
+      birthday48Intro.style.opacity = "0";
+      birthday48Intro.style.visibility = "hidden";
+      birthday48Intro.style.display = "grid";
+
+      requestAnimationFrame(() => {
+
+        birthday48Intro.classList.add(
+          "is-showing"
+        );
+
+        birthday48Intro.style.visibility = "visible";
+        birthday48Intro.style.opacity = "1";
+        birthday48Intro.setAttribute(
+          "aria-hidden",
+          "false"
+        );
+
+      });
 
       setTimeout(
         () => {
@@ -4831,6 +4868,8 @@
 
           birthday48Intro.style.opacity =
             "0";
+          birthday48Intro.style.visibility =
+            "hidden";
 
         },
         1900
@@ -4845,7 +4884,8 @@
 
           birthday48Intro.style.opacity =
             "";
-
+          birthday48Intro.style.visibility =
+            "";
           birthday48Intro.style.transition =
             "";
 
@@ -4869,6 +4909,37 @@
       false;
 
 
+    function restoreOpenedState() {
+
+      if (
+        sessionStorage.getItem(
+          OPEN_STATE_KEY
+        ) === "opened"
+      ) {
+
+        envelopeOpened = true;
+        envelopeScreen.style.display = "none";
+        document.body.classList.remove("locked");
+        document.body.style.overflow = "auto";
+
+        window.scrollTo(0, 0);
+
+        document
+          .querySelectorAll(
+            ".reveal"
+          )
+          .forEach(
+            element =>
+              element.classList.add(
+                "visible"
+              )
+          );
+
+      }
+
+    }
+
+
     function openEnvelope() {
 
       if (
@@ -4880,6 +4951,18 @@
 
       envelopeOpened =
         true;
+
+      try {
+        sessionStorage.setItem(
+          OPEN_STATE_KEY,
+          "opened"
+        );
+      } catch (error) {
+        console.warn(
+          "Could not persist envelope state:",
+          error
+        );
+      }
 
       envelopeHint.textContent =
         "Opening…";
@@ -5077,6 +5160,8 @@
                 "locked"
               );
 
+              document.body.style.overflow = "auto";
+
               window.scrollTo(
                 0,
                 0
@@ -5110,6 +5195,27 @@
 
     }
 
+
+    restoreOpenedState();
+
+    window.addEventListener(
+      "pageshow",
+      () => {
+        restoreOpenedState();
+      }
+    );
+
+    document.addEventListener(
+      "visibilitychange",
+      () => {
+        if (
+          document.visibilityState === "visible"
+          && sessionStorage.getItem(OPEN_STATE_KEY) === "opened"
+        ) {
+          restoreOpenedState();
+        }
+      }
+    );
 
     envelope.addEventListener(
       "click",
