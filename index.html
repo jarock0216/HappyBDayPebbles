@@ -409,16 +409,19 @@
     }
 
     .birthday-48-content {
-      text-align: center;
-      transform: translateY(16px);
-      opacity: 0;
-    }
+  opacity: 0;
+  transform: translateY(16px);
+  position: relative;
+  z-index: 1;
+}
 
     .birthday-48-intro.is-showing .birthday-48-content {
       animation:
         birthday48ContentIn .8s
         cubic-bezier(.22,.61,.36,1)
-        forwards;
+        forwards
+      opacity: 1;
+  transform: translateY(0);
     }
 
     .birthday-48-kicker {
