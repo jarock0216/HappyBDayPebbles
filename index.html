@@ -1,0 +1,5114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover"
+  />
+  <title>Happy Birthday, Toya</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap"
+    rel="stylesheet"
+  />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            lavender: "#E9D5FF",
+            plum: "#3B0764",
+            cream: "#FFFAF0",
+            gold: "#D97706",
+            cozy: "#180A29"
+          },
+          fontFamily: {
+            display: ["Playfair Display", "serif"],
+            sans: ["Inter", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    :root {
+      --lavender: #E9D5FF;
+      --plum: #3B0764;
+      --cream: #FFFAF0;
+      --gold: #D97706;
+      --gold-light: #F3C66B;
+      --cozy: #180A29;
+      --deep: #100618;
+      --soft-white: rgba(255,250,240,.72);
+      --audio-energy: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      background: var(--cozy);
+      scroll-behavior: auto;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100%;
+      overflow-x: hidden;
+      background:
+        radial-gradient(
+          circle at 50% 8%,
+          rgba(217,119,6,.12),
+          transparent 28%
+        ),
+        radial-gradient(
+          circle at 15% 70%,
+          rgba(233,213,255,.08),
+          transparent 28%
+        ),
+        var(--cozy);
+      color: var(--cream);
+      font-family: Inter, sans-serif;
+    }
+
+    /*
+      Very subtle musical "breathing."
+      It is intentionally restrained so the page never feels
+      like a music visualizer.
+    */
+    body.music-active {
+      background:
+        radial-gradient(
+          circle at 50% 8%,
+          rgba(217,119,6,calc(.12 + var(--audio-energy) * .08)),
+          transparent 28%
+        ),
+        radial-gradient(
+          circle at 15% 70%,
+          rgba(233,213,255,calc(.08 + var(--audio-energy) * .045)),
+          transparent 28%
+        ),
+        var(--cozy);
+    }
+
+    body.locked {
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    body.viewer-open {
+      overflow: hidden;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    .font-display {
+      font-family: "Playfair Display", serif;
+    }
+
+    /* =========================================================
+       AMBIENT WORLD
+    ========================================================= */
+
+    #ambientCanvas,
+    #confettiCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    #ambientCanvas {
+      z-index: 1;
+      opacity: .65;
+    }
+
+    #confettiCanvas {
+      z-index: 100;
+    }
+
+    .ambient-light {
+      position: fixed;
+      left: 50%;
+      top: 42%;
+      width: 75vw;
+      height: 75vw;
+      max-width: 850px;
+      max-height: 850px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background:
+        radial-gradient(
+          circle,
+          rgba(217,119,6,.14) 0%,
+          rgba(233,213,255,.055) 38%,
+          transparent 70%
+        );
+      filter: blur(28px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: .7;
+      transition:
+        transform .4s ease,
+        opacity .4s ease;
+    }
+
+    /* =========================================================
+       ENVELOPE INTRO
+    ========================================================= */
+
+    .envelope-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background:
+        radial-gradient(
+          circle at 50% 45%,
+          rgba(217,119,6,.13),
+          transparent 34%
+        ),
+        #180A29;
+    }
+
+    .envelope-intro {
+      width: 100%;
+      max-width: 520px;
+      text-align: center;
+      transition:
+        opacity .7s ease,
+        transform .7s cubic-bezier(.22,.61,.36,1);
+    }
+
+    .envelope-screen.is-celebrating .envelope-intro {
+      opacity: 0;
+      transform: translateY(-12px) scale(.98);
+    }
+
+    .envelope-kicker {
+      margin: 0 0 30px;
+      color: rgba(255,250,240,.6);
+      font-size: 10px;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+    }
+
+    .envelope {
+      position: relative;
+      width: min(84vw, 400px);
+      aspect-ratio: 1.55 / 1;
+      margin: 0 auto;
+      perspective: 1200px;
+      transform-style: preserve-3d;
+      cursor: pointer;
+    }
+
+    /*
+      ORIGINAL ENVELOPE COLORS/LAYERING PRESERVED.
+    */
+
+    .envelope-back {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      border-radius: 8px;
+      background:
+        linear-gradient(
+          145deg,
+          #E9D5FF 0%,
+          #C084FC 48%,
+          #7E22CE 100%
+        );
+      box-shadow:
+        0 35px 90px rgba(0,0,0,.44),
+        0 10px 28px rgba(217,119,6,.12);
+    }
+
+    .envelope-paper {
+      position: absolute;
+      left: 8%;
+      top: 17%;
+      width: 84%;
+      height: 82%;
+      z-index: 2;
+      background: var(--cream);
+      color: var(--plum);
+      border: 1px solid rgba(59,7,100,.08);
+      border-radius: 4px;
+      box-shadow:
+        0 15px 30px rgba(0,0,0,.18);
+      transform:
+        translateY(38%)
+        scale(.96);
+      transform-origin: center bottom;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      clip-path: inset(0 0 0 0);
+    }
+
+    .paper-inner {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .paper-small {
+      font-size: 9px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      opacity: .52;
+      margin-bottom: 7px;
+    }
+
+    .paper-inner strong {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(25px, 7vw, 35px);
+      font-weight: 500;
+    }
+
+    .paper-script {
+      margin-top: 7px;
+      font-family: "Playfair Display", serif;
+      font-style: italic;
+      font-size: 17px;
+      opacity: .62;
+    }
+
+    .envelope-pocket {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 68%;
+      z-index: 4;
+      background:
+        linear-gradient(
+          145deg,
+          #D8B4FE 0%,
+          #A855F7 52%,
+          #6B21A8 100%
+        );
+      clip-path: polygon(
+        0 0,
+        50% 52%,
+        100% 0,
+        100% 100%,
+        0 100%
+      );
+    }
+
+    .envelope-flap {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 67%;
+      z-index: 6;
+      background:
+        linear-gradient(
+          145deg,
+          #E9D5FF 0%,
+          #C084FC 50%,
+          #9333EA 100%
+        );
+      clip-path: polygon(
+        0 0,
+        100% 0,
+        50% 100%
+      );
+      transform-origin: 50% 0%;
+      backface-visibility: hidden;
+    }
+
+    .wax-seal {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 10;
+      width: 64px;
+      height: 64px;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background:
+        radial-gradient(
+          circle at 35% 30%,
+          #FDE68A 0%,
+          #F3C66B 38%,
+          #D97706 72%,
+          #A85A05 100%
+        );
+      border: 1px solid rgba(255,250,240,.4);
+      color: #5B21B6;
+      box-shadow:
+        0 10px 20px rgba(0,0,0,.28),
+        inset 0 0 0 2px rgba(255,250,240,.18),
+        0 0 18px rgba(243,198,107,.16);
+      font-size: 22px;
+    }
+
+    .envelope-hint {
+      margin: 28px 0 0;
+      color: rgba(255,250,240,.5);
+      font-size: 11px;
+      letter-spacing: .08em;
+      transition: opacity .3s ease;
+    }
+
+    /* =========================================================
+       48 OPENING MOMENT
+    ========================================================= */
+
+    .birthday-48-intro {
+      position: fixed;
+      inset: 0;
+      z-index: 120;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(
+          circle at 50% 50%,
+          rgba(217,119,6,.13),
+          transparent 34%
+        ),
+        #180A29;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .birthday-48-intro.is-showing {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .birthday-48-content {
+      text-align: center;
+      transform: translateY(16px);
+      opacity: 0;
+    }
+
+    .birthday-48-intro.is-showing .birthday-48-content {
+      animation:
+        birthday48ContentIn .8s
+        cubic-bezier(.22,.61,.36,1)
+        forwards;
+    }
+
+    .birthday-48-kicker {
+      margin-bottom: 14px;
+      color: rgba(233,213,255,.58);
+      font-size: 9px;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+    }
+
+    .birthday-48-number {
+      display: flex;
+      justify-content: center;
+      gap: .01em;
+      color: var(--gold-light);
+      font-family: "Playfair Display", serif;
+      font-size: clamp(110px, 30vw, 260px);
+      line-height: .75;
+      letter-spacing: -.08em;
+    }
+
+    .birthday-48-number span {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(35px) scale(.8);
+    }
+
+    .birthday-48-intro.is-showing .birthday-48-number span:first-child {
+      animation:
+        birthdayDigitIn .7s
+        .15s
+        cubic-bezier(.22,.61,.36,1)
+        forwards;
+    }
+
+    .birthday-48-intro.is-showing .birthday-48-number span:last-child {
+      animation:
+        birthdayDigitIn .7s
+        .32s
+        cubic-bezier(.22,.61,.36,1)
+        forwards;
+    }
+
+    .birthday-48-name {
+      margin-top: 24px;
+      color: var(--cream);
+      font-family: "Playfair Display", serif;
+      font-size: clamp(25px, 7vw, 42px);
+      font-style: italic;
+      opacity: 0;
+    }
+
+    .birthday-48-intro.is-showing .birthday-48-name {
+      animation:
+        birthdayNameIn .8s
+        .62s
+        ease
+        forwards;
+    }
+
+    @keyframes birthday48ContentIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes birthdayDigitIn {
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes birthdayNameIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    /* =========================================================
+       EXPERIENCE
+    ========================================================= */
+
+    #experience {
+      position: relative;
+      z-index: 5;
+    }
+
+    .story-chapter {
+      position: relative;
+      min-height: 88svh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding:
+        clamp(90px, 14vw, 150px)
+        24px;
+      overflow: hidden;
+    }
+
+    .story-chapter.hero {
+      min-height: 100svh;
+    }
+/* =========================================================
+   HERO BACKGROUND — PURPLE, NOT ORANGE
+========================================================= */
+
+.story-chapter.hero {
+  min-height: 100svh;
+
+  background:
+    radial-gradient(
+      circle at 50% 18%,
+      rgba(126, 34, 206, .16),
+      transparent 48%
+    ),
+    radial-gradient(
+      circle at 15% 75%,
+      rgba(91, 33, 182, .12),
+      transparent 42%
+    ),
+    linear-gradient(
+      180deg,
+      #180A29 0%,
+      #140921 55%,
+      #100618 100%
+    );
+}
+    .chapter-inner {
+      position: relative;
+      z-index: 5;
+      width: min(100%, 900px);
+      margin: auto;
+    }
+
+    .centered {
+      text-align: center;
+    }
+
+    .eyebrow {
+      margin-bottom: 18px;
+      color: rgba(233,213,255,.7);
+      font-size: 10px;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+    }
+
+    /* =========================================================
+       CHAPTER CUES
+    ========================================================= */
+
+    .chapter-cues {
+      position: fixed;
+      right: 24px;
+      top: 50%;
+      z-index: 20;
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    .chapter-cue {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(255,250,240,.2);
+      transition:
+        transform .35s ease,
+        background .35s ease;
+    }
+
+    .chapter-cue.active {
+      background: var(--gold-light);
+      transform: scale(1.7);
+    }
+
+    /* =========================================================
+       HERO
+    ========================================================= */
+
+    .hero-title {
+      margin: 0;
+      font-family: "Playfair Display", serif;
+      font-size: clamp(48px, 13vw, 100px);
+      line-height: .93;
+      letter-spacing: -.045em;
+      font-weight: 400;
+    }
+
+    .hero-name {
+      display: block;
+      margin-top: 18px;
+      color: var(--lavender);
+      font-style: italic;
+    }
+
+    .hero-age {
+      display: block;
+      margin-top: 28px;
+      color: var(--gold-light);
+      font-family: "Playfair Display", serif;
+      font-size: clamp(17px, 4vw, 24px);
+      letter-spacing: .04em;
+    }
+
+    .nickname-line {
+      margin-top: 16px;
+      color: rgba(233,213,255,.68);
+      font-family: "Playfair Display", serif;
+      font-style: italic;
+      font-size: 17px;
+      letter-spacing: .03em;
+    }
+
+    .nickname-line span {
+      color: rgba(217,119,6,.7);
+      padding: 0 6px;
+    }
+
+    .hero-subtitle {
+      max-width: 520px;
+      margin: 28px auto 0;
+      color: rgba(255,250,240,.62);
+      font-size: 14px;
+      line-height: 1.85;
+    }
+
+    /*
+      Removed the old "Keep going" scroll prompt.
+      The page now lets the user discover the experience naturally.
+    */
+
+    /* =========================================================
+       MEMORY EXPERIENCE
+    ========================================================= */
+
+    #chapterMemories {
+      min-height: 100svh;
+    }
+
+    .memory-heading {
+      margin: 0;
+      font-family: "Playfair Display", serif;
+      font-size: clamp(39px, 10vw, 72px);
+      line-height: .98;
+      font-weight: 400;
+      letter-spacing: -.035em;
+    }
+
+    .memory-intro {
+      max-width: 460px;
+      margin: 20px auto 0;
+      color: rgba(255,250,240,.55);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .memory-stage {
+      position: relative;
+      width: min(88vw, 470px);
+      height: min(112vw, 550px);
+      max-height: 64vh;
+      margin: 48px auto 0;
+      touch-action: pan-y;
+      user-select: none;
+      perspective: 1200px;
+    }
+
+    .memory-stage::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -18px;
+      width: 72%;
+      height: 35px;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.28);
+      filter: blur(18px);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .memory-card {
+      position: absolute;
+      inset: 0;
+      padding: 11px;
+      background: var(--cream);
+      color: var(--plum);
+      box-shadow:
+        0 30px 80px rgba(0,0,0,.4);
+      border-radius: 5px;
+      transform-origin: center center;
+      cursor: pointer;
+      will-change: transform, opacity;
+      transition:
+        transform .7s cubic-bezier(.22,.61,.36,1),
+        opacity .5s ease,
+        filter .5s ease;
+    }
+
+    .memory-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgba(59,7,100,.08);
+      pointer-events: none;
+    }
+
+    .memory-card.active {
+      cursor: zoom-in;
+    }
+
+    .memory-card img {
+      display: block;
+      width: 100%;
+      height: calc(100% - 62px);
+      object-fit: cover;
+      border-radius: 2px;
+      background: #e9dfd0;
+      pointer-events: none;
+    }
+
+    .memory-caption {
+      height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 8px 5px 0;
+      font-family: "Playfair Display", serif;
+      font-size: 15px;
+      line-height: 1.3;
+      text-align: center;
+    }
+
+    /*
+      The old bottom-right ↗ icon has intentionally been removed.
+    */
+
+    .memory-meta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      margin-top: 28px;
+    }
+
+    .memory-counter {
+      min-width: 60px;
+      color: rgba(255,250,240,.72);
+      font-family: "Playfair Display", serif;
+      font-size: 15px;
+      letter-spacing: .04em;
+    }
+
+    .memory-btn {
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(233,213,255,.2);
+      border-radius: 50%;
+      background: rgba(255,250,240,.035);
+      color: var(--cream);
+      cursor: pointer;
+      transition:
+        transform .3s ease,
+        border-color .3s ease,
+        background .3s ease,
+        box-shadow .3s ease;
+    }
+
+    .memory-btn:hover {
+      transform: translateY(-2px);
+      background: rgba(255,250,240,.08);
+      border-color: rgba(217,119,6,.45);
+      box-shadow: 0 7px 20px rgba(0,0,0,.14);
+    }
+
+    .memory-btn:active {
+      transform: scale(.94);
+    }
+
+    .memory-progress {
+      position: relative;
+      width: min(72vw, 300px);
+      height: 1px;
+      margin: 22px auto 0;
+      background: rgba(255,255,255,.12);
+      overflow: hidden;
+    }
+
+    .memory-progress-fill {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 14.285%;
+      background: var(--gold);
+      transform-origin: left center;
+      transition: width .65s cubic-bezier(.22,.61,.36,1);
+    }
+
+    .memory-hint {
+      margin-top: 15px;
+      color: rgba(255,250,240,.3);
+      font-size: 9px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    /* =========================================================
+       FULL-SCREEN MEMORY VIEWER
+    ========================================================= */
+
+    .memory-viewer {
+      position: fixed;
+      inset: 0;
+      z-index: 95;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding:
+        max(22px, env(safe-area-inset-top))
+        22px
+        max(22px, env(safe-area-inset-bottom));
+      background:
+        radial-gradient(
+          circle at 50% 42%,
+          rgba(217,119,6,.09),
+          transparent 35%
+        ),
+        rgba(10,3,18,.96);
+      backdrop-filter: blur(18px);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition:
+        opacity .35s ease,
+        visibility .35s ease;
+    }
+
+    .memory-viewer.is-open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .memory-viewer-inner {
+      position: relative;
+      width: min(100%, 1000px);
+      max-height: 92svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .memory-viewer-photo-wrap {
+      position: relative;
+      width: min(90vw, 650px);
+      max-height: 76svh;
+      padding: 9px;
+      background: var(--cream);
+      box-shadow:
+        0 40px 100px rgba(0,0,0,.55);
+      transform:
+        translateY(25px)
+        scale(.96);
+      opacity: 0;
+      transition:
+        transform .55s cubic-bezier(.22,.61,.36,1),
+        opacity .45s ease;
+    }
+
+    .memory-viewer.is-open .memory-viewer-photo-wrap {
+      transform:
+        translateY(0)
+        scale(1);
+      opacity: 1;
+    }
+
+    .memory-viewer-photo {
+      display: block;
+      width: 100%;
+      max-height: 70svh;
+      object-fit: contain;
+      background: #e9dfd0;
+    }
+
+    .memory-viewer-caption {
+      width: min(90vw, 650px);
+      margin-top: 20px;
+      color: rgba(255,250,240,.82);
+      font-family: "Playfair Display", serif;
+      font-size: clamp(18px, 4vw, 24px);
+      line-height: 1.45;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(12px);
+      transition:
+        opacity .5s ease .12s,
+        transform .5s ease .12s;
+    }
+
+    .memory-viewer.is-open .memory-viewer-caption {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .memory-viewer-count {
+      margin-top: 9px;
+      color: rgba(233,213,255,.45);
+      font-size: 9px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    /*
+      Desktop: arrows sit beside the photo.
+      Mobile: overridden below so they sit BELOW the
+      Memory X of 7 counter instead of over content.
+    */
+
+    .memory-viewer-nav {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      display: flex;
+      justify-content: space-between;
+      transform: translateY(-50%);
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    .memory-viewer-nav button {
+      width: 48px;
+      height: 48px;
+      border: 1px solid rgba(255,250,240,.15);
+      border-radius: 50%;
+      background: rgba(24,10,41,.78);
+      color: var(--cream);
+      cursor: pointer;
+      pointer-events: auto;
+      transition:
+        transform .25s ease,
+        background .25s ease;
+    }
+
+    .memory-viewer-nav button:hover {
+      transform: scale(1.06);
+      background: rgba(59,7,100,.9);
+    }
+
+    /* =========================================================
+       LETTER
+    ========================================================= */
+
+    .letter-chapter {
+      min-height: auto;
+      padding-top: 100px;
+      padding-bottom: 130px;
+    }
+
+    .letter-shell {
+      width: min(100%, 760px);
+      margin: 0 auto;
+      padding: clamp(30px, 7vw, 64px);
+      border-top: 1px solid rgba(217,119,6,.32);
+      border-bottom: 1px solid rgba(217,119,6,.18);
+      background:
+        linear-gradient(
+          180deg,
+          rgba(255,250,240,.035),
+          transparent
+        );
+    }
+
+    .letter-title {
+      margin: 0 0 38px;
+      font-family: "Playfair Display", serif;
+      font-size: clamp(35px, 9vw, 58px);
+      font-weight: 400;
+      line-height: .98;
+      letter-spacing: -.03em;
+    }
+
+    .letter-body {
+      color: rgba(255,250,240,.76);
+      font-family: "Playfair Display", serif;
+      font-size: clamp(17px, 4.4vw, 21px);
+      line-height: 1.85;
+    }
+
+    .letter-body p {
+      margin: 0 0 25px;
+    }
+
+    .letter-signoff {
+      margin-top: 44px;
+      color: var(--gold-light);
+      font-family: "Playfair Display", serif;
+      font-style: italic;
+      font-size: 22px;
+    }
+
+    .interactive-phrase {
+      color: var(--lavender);
+      text-decoration: underline;
+      text-decoration-color: rgba(233,213,255,.25);
+      text-underline-offset: 5px;
+      cursor: pointer;
+      transition:
+        color .25s ease,
+        text-decoration-color .25s ease;
+    }
+
+    .interactive-phrase:hover {
+      color: var(--gold-light);
+      text-decoration-color: rgba(243,198,107,.5);
+    }
+
+    /* =========================================================
+       MAKE A WISH
+    ========================================================= */
+
+    .wish-chapter {
+      min-height: 92svh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .wish-wrap {
+      width: min(100%, 650px);
+      margin: 0 auto;
+    }
+
+    .wish-title {
+      margin: 0;
+      font-family: "Playfair Display", serif;
+      font-size: clamp(48px, 12vw, 82px);
+      line-height: .94;
+      font-weight: 400;
+      letter-spacing: -.045em;
+    }
+
+    .wish-title em {
+      color: var(--gold-light);
+      font-style: italic;
+    }
+
+    .wish-subtitle {
+      max-width: 430px;
+      margin: 25px auto 0;
+      color: rgba(255,250,240,.55);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .wish-button {
+      --wish-progress: 0deg;
+
+      position: relative;
+      width: 138px;
+      height: 138px;
+      margin: 42px auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      border-radius: 50%;
+      background:
+        radial-gradient(
+          circle at 35% 30%,
+          #FDE68A 0%,
+          #F3C66B 34%,
+          #D97706 72%,
+          #A85A05 100%
+        );
+      color: var(--plum);
+      cursor: pointer;
+      touch-action: none;
+      user-select: none;
+      box-shadow:
+        0 20px 45px rgba(0,0,0,.25),
+        0 0 0 0 rgba(243,198,107,.25);
+      transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+    }
+
+    .wish-button::before {
+      content: "";
+      position: absolute;
+      inset: -7px;
+      border-radius: 50%;
+      background:
+        conic-gradient(
+          var(--gold-light) var(--wish-progress),
+          rgba(243,198,107,.12) var(--wish-progress)
+        );
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      padding: 2px;
+    }
+
+    .wish-button:hover {
+      transform: scale(1.04);
+      box-shadow:
+        0 22px 50px rgba(0,0,0,.3),
+        0 0 32px rgba(243,198,107,.12);
+    }
+
+    .wish-button:active,
+    .wish-button.holding {
+      transform: scale(.97);
+    }
+
+    .wish-button.holding {
+      box-shadow:
+        0 20px 48px rgba(0,0,0,.28),
+        0 0 42px rgba(243,198,107,.25);
+    }
+
+    .wish-ring {
+      position: absolute;
+      inset: 12px;
+      border: 1px solid rgba(59,7,100,.18);
+      border-radius: 50%;
+    }
+
+    .wish-button-label {
+      position: relative;
+      z-index: 2;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .wish-status {
+      min-height: 20px;
+      margin-top: 24px;
+      color: rgba(233,213,255,.5);
+      font-family: "Playfair Display", serif;
+      font-size: 14px;
+      font-style: italic;
+    }
+
+    .wish-chapter.wish-complete .wish-button {
+      animation: wishGlow 1.5s ease-in-out infinite;
+    }
+
+    @keyframes wishGlow {
+      0%,100% {
+        box-shadow:
+          0 20px 45px rgba(0,0,0,.25),
+          0 0 0 0 rgba(243,198,107,.15);
+      }
+      50% {
+        box-shadow:
+          0 20px 45px rgba(0,0,0,.25),
+          0 0 45px rgba(243,198,107,.25);
+      }
+    }
+
+    .wish-star {
+      position: fixed;
+      z-index: 90;
+      pointer-events: none;
+      color: var(--gold-light);
+      font-size: 15px;
+    }
+
+    /* =========================================================
+       FINAL
+    ========================================================= */
+
+    .final-chapter {
+      min-height: 100svh;
+    }
+
+    .final-title {
+      margin: 0;
+      font-family: "Playfair Display", serif;
+      font-size: clamp(46px, 12vw, 84px);
+      font-weight: 400;
+      line-height: .96;
+      letter-spacing: -.04em;
+    }
+
+    .final-subtitle {
+      max-width: 450px;
+      margin: 25px auto 0;
+      color: rgba(255,250,240,.55);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .prayer-button {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      margin-top: 38px;
+      padding: 16px 28px;
+      border: 1px solid rgba(243,198,107,.55);
+      border-radius: 6px;
+      background:
+        linear-gradient(
+          135deg,
+          #3B0764 0%,
+          #2A0847 55%,
+          #1C092E 100%
+        );
+      color: #FFFAF0;
+      cursor: pointer;
+      letter-spacing: .035em;
+      box-shadow:
+        0 10px 28px rgba(0,0,0,.22),
+        inset 0 1px 0 rgba(255,255,255,.08);
+      transition:
+        transform .3s ease,
+        border-color .3s ease,
+        box-shadow .3s ease;
+    }
+
+    .prayer-button::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(
+          110deg,
+          transparent 20%,
+          rgba(243,198,107,.14) 48%,
+          transparent 72%
+        );
+      transform: translateX(-120%);
+      transition: transform .8s ease;
+      z-index: -1;
+    }
+
+    .prayer-button:hover {
+      transform: translateY(-2px);
+      border-color: rgba(217,119,6,.7);
+      box-shadow:
+        0 14px 35px rgba(0,0,0,.28);
+    }
+
+    .prayer-button:hover::after {
+      transform: translateX(120%);
+    }
+
+    .final-mark {
+      margin-top: 75px;
+      color: rgba(233,213,255,.45);
+      font-family: "Playfair Display", serif;
+      font-style: italic;
+      font-size: 18px;
+      transition:
+        opacity 1.2s ease,
+        transform 1.2s ease;
+    }
+
+    .final-mark.settled {
+      color: var(--gold-light);
+      opacity: .85;
+      transform: scale(1.03);
+    }
+
+    /* =========================================================
+       PRAYER MODAL
+    ========================================================= */
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 22px;
+      background: rgba(12,4,22,.88);
+      backdrop-filter: blur(14px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s ease;
+    }
+
+    .modal.is-open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      width: min(100%, 650px);
+      max-height: 82vh;
+      overflow-y: auto;
+      padding: clamp(30px, 7vw, 55px);
+      background: var(--cream);
+      color: var(--plum);
+      border: 1px solid rgba(217,119,6,.25);
+      box-shadow:
+        0 30px 100px rgba(0,0,0,.45);
+      transform:
+        translateY(25px)
+        scale(.97);
+      opacity: 0;
+    }
+
+    .modal.is-open .modal-card {
+      animation:
+        prayerModalIn .5s
+        cubic-bezier(.22,.61,.36,1)
+        forwards;
+    }
+
+    @keyframes prayerModalIn {
+      to {
+        opacity: 1;
+        transform:
+          translateY(0)
+          scale(1);
+      }
+    }
+
+    .modal-card h2 {
+      margin: 0 0 28px;
+      font-family: "Playfair Display", serif;
+      font-size: clamp(34px, 8vw, 54px);
+      font-weight: 400;
+      line-height: .98;
+    }
+
+    .prayer-text {
+      font-family: "Playfair Display", serif;
+      font-size: 18px;
+      line-height: 1.8;
+    }
+
+    .prayer-text p {
+      margin: 0 0 19px;
+      opacity: 0;
+      transform: translateY(14px);
+    }
+
+    .prayer-text.revealing p {
+      animation:
+        prayerLineIn .7s
+        cubic-bezier(.22,.61,.36,1)
+        forwards;
+    }
+
+    @keyframes prayerLineIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-close {
+      margin-top: 22px;
+      padding: 12px 18px;
+      border: 0;
+      background: var(--plum);
+      color: var(--cream);
+      cursor: pointer;
+    }
+
+    /* =========================================================
+       AUDIO
+    ========================================================= */
+
+    .audio-button {
+      position: fixed;
+      right: 18px;
+      bottom: max(18px, env(safe-area-inset-bottom));
+      z-index: 40;
+      width: 48px;
+      height: 48px;
+      border: 1px solid rgba(233,213,255,.2);
+      border-radius: 50%;
+      background: rgba(24,10,41,.8);
+      color: var(--cream);
+      backdrop-filter: blur(12px);
+      cursor: pointer;
+      transition:
+        transform .25s ease,
+        border-color .25s ease,
+        box-shadow .25s ease;
+    }
+
+    .audio-button:hover {
+      transform: scale(1.05);
+    }
+
+    .audio-button.playing {
+      border-color: rgba(217,119,6,.6);
+      box-shadow:
+        0 0 22px rgba(217,119,6,.12),
+        0 0 calc(18px + var(--audio-energy) * 18px)
+        rgba(243,198,107,.12);
+    }
+
+    .audio-icon {
+      display: inline-block;
+      transition: transform .3s ease;
+    }
+
+    .audio-button.playing .audio-icon {
+      animation:
+        musicPulse 1.3s
+        ease-in-out
+        infinite;
+    }
+
+    @keyframes musicPulse {
+      0%,100% {
+        transform: scale(1);
+      }
+      50% {
+        transform:
+          scale(
+            calc(1 + var(--audio-energy) * .16)
+          );
+      }
+    }
+
+    /* =========================================================
+       REVEAL SYSTEM
+    ========================================================= */
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(35px);
+      transition:
+        opacity .9s cubic-bezier(.22,.61,.36,1),
+        transform .9s cubic-bezier(.22,.61,.36,1);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 {
+      transition-delay: .12s;
+    }
+
+    .reveal-delay-2 {
+      transition-delay: .24s;
+    }
+
+    .reveal-delay-3 {
+      transition-delay: .36s;
+    }
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+
+    @media (min-width: 900px) {
+
+      .chapter-cues {
+        display: flex;
+      }
+
+      .hero .chapter-inner {
+        transform: translateX(-4vw);
+      }
+
+      #chapterMemories .chapter-inner {
+        width: min(100%, 1180px);
+      }
+
+      #chapterMemories .memory-stage {
+        width: min(42vw, 520px);
+        height: min(54vw, 600px);
+        max-height: 600px;
+        transform: translateX(4vw);
+      }
+
+      #chapterMemories .memory-meta,
+      #chapterMemories .memory-progress,
+      #chapterMemories .memory-hint {
+        transform: translateX(4vw);
+      }
+
+      .letter-shell {
+        transform: translateX(-9vw);
+      }
+
+      .wish-wrap {
+        transform: translateX(5vw);
+      }
+
+      .final-chapter .chapter-inner {
+        transform: translateX(5vw);
+      }
+
+      .memory-card:nth-child(n) {
+        box-shadow:
+          0 35px 90px rgba(0,0,0,.42);
+      }
+
+      .memory-viewer-photo-wrap {
+        width: min(65vw, 720px);
+      }
+    }
+
+    @media (max-width: 600px) {
+
+      .story-chapter {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .memory-stage {
+        width: min(88vw, 420px);
+        height: min(112vw, 520px);
+      }
+
+      .audio-button {
+        right: 14px;
+      }
+
+      /*
+        MOBILE MEMORY VIEWER FIX
+
+        The arrows are no longer positioned beside/over
+        the photograph. They live below the Memory X of 7
+        counter so they cannot cover the caption or image.
+      */
+
+      .memory-viewer {
+        align-items: center;
+        padding:
+          max(18px, env(safe-area-inset-top))
+          18px
+          max(18px, env(safe-area-inset-bottom));
+      }
+
+      .memory-viewer-inner {
+        width: 100%;
+        max-height: 94svh;
+        padding-bottom: 8px;
+      }
+
+      .memory-viewer-photo-wrap {
+        width: min(92vw, 650px);
+        max-height: 62svh;
+      }
+
+      .memory-viewer-photo {
+        max-height: 56svh;
+      }
+
+      .memory-viewer-caption {
+        width: min(88vw, 650px);
+        margin-top: 16px;
+        font-size: clamp(17px, 4.5vw, 22px);
+      }
+
+      .memory-viewer-count {
+        margin-top: 10px;
+      }
+
+      .memory-viewer-nav {
+        position: static;
+        width: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 22px;
+        margin-top: 13px;
+        transform: none;
+        pointer-events: auto;
+      }
+
+      .memory-viewer-nav button {
+        width: 44px;
+        height: 44px;
+      }
+
+      .memory-viewer-close {
+        right: 0;
+        top: 0;
+      }
+    }
+
+    @media (max-width: 380px) {
+
+      .memory-viewer-photo-wrap {
+        max-height: 57svh;
+      }
+
+      .memory-viewer-photo {
+        max-height: 51svh;
+      }
+
+      .memory-viewer-caption {
+        margin-top: 13px;
+        font-size: 16px;
+      }
+
+      .memory-viewer-nav {
+        margin-top: 10px;
+      }
+
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
+      }
+
+      .birthday-48-intro {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body class="locked">
+
+  <!-- =======================================================
+       AMBIENT
+  ======================================================== -->
+
+  <canvas id="ambientCanvas"></canvas>
+  <canvas id="confettiCanvas"></canvas>
+
+  <div
+    class="ambient-light"
+    id="ambientLight"
+  ></div>
+
+  <!-- =======================================================
+       MUSIC
+  ======================================================== -->
+
+  <audio
+    id="birthdayAudio"
+    loop
+    preload="auto"
+  >
+    <source
+      src="soul-instrumental.mp3"
+      type="audio/mpeg"
+    />
+  </audio>
+
+  <!-- =======================================================
+       ENVELOPE
+  ======================================================== -->
+
+  <div
+    class="envelope-screen"
+    id="envelopeScreen"
+  >
+
+    <!-- 48 MOMENT -->
+    <div
+      class="birthday-48-intro"
+      id="birthday48Intro"
+      aria-hidden="true"
+    >
+      <div class="birthday-48-content">
+
+        <div class="birthday-48-kicker">
+          A new chapter
+        </div>
+
+        <div
+          class="birthday-48-number"
+          aria-label="48"
+        >
+          <span>4</span>
+          <span>8</span>
+        </div>
+
+        <div
+          class="birthday-48-name"
+          id="birthday48Name"
+        >
+          Toya
+        </div>
+
+      </div>
+    </div>
+
+    <div class="envelope-intro">
+
+      <p class="envelope-kicker">
+        A little something for you
+      </p>
+
+      <div
+        class="envelope"
+        id="envelope"
+        role="button"
+        tabindex="0"
+        aria-label="Open birthday card"
+      >
+
+        <div class="envelope-back"></div>
+
+        <div
+          class="envelope-paper"
+          id="envelopePaper"
+        >
+          <div class="paper-inner">
+
+            <span class="paper-small">
+              For
+            </span>
+
+            <strong id="envelopeName">
+              Toya
+            </strong>
+
+            <span class="paper-script">
+              with love
+            </span>
+
+          </div>
+        </div>
+
+        <div class="envelope-pocket"></div>
+
+        <div
+          class="envelope-flap"
+          id="envelopeFlap"
+        ></div>
+
+        <div
+          class="wax-seal"
+          id="waxSeal"
+        >
+          ♥
+        </div>
+
+      </div>
+
+      <p
+        class="envelope-hint"
+        id="envelopeHint"
+      >
+        Tap to open
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- =======================================================
+       CHAPTER CUES
+  ======================================================== -->
+
+  <div
+    class="chapter-cues"
+    id="chapterCues"
+    aria-hidden="true"
+  >
+    <span class="chapter-cue active"></span>
+    <span class="chapter-cue"></span>
+    <span class="chapter-cue"></span>
+    <span class="chapter-cue"></span>
+    <span class="chapter-cue"></span>
+  </div>
+
+  <!-- =======================================================
+       EXPERIENCE
+  ======================================================== -->
+
+  <main id="experience">
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <section
+      class="story-chapter hero"
+      id="chapterHero"
+      data-chapter="0"
+    >
+
+      <div class="chapter-inner centered">
+
+        <div class="eyebrow reveal">
+          A birthday celebration
+        </div>
+
+        <h1 class="hero-title reveal reveal-delay-1">
+
+          Happy Birthday
+
+          <span
+            class="hero-name"
+            id="heroName"
+          >
+            Toya
+          </span>
+
+        </h1>
+
+        <div class="hero-age reveal reveal-delay-2">
+          48 years of grace, strength & love
+        </div>
+
+        <div class="nickname-line reveal reveal-delay-3">
+          Bka <span>•</span> Pebbles
+        </div>
+
+        <p class="hero-subtitle reveal reveal-delay-3">
+          Today isn't just another birthday.
+          It's a celebration of the woman you've become,
+          the life you've lived, and everything still ahead.
+        </p>
+
+      </div>
+    </section>
+
+    <!-- =====================================================
+         MEMORIES
+    ====================================================== -->
+
+    <section
+      class="story-chapter"
+      id="chapterMemories"
+      data-chapter="1"
+    >
+
+      <div class="chapter-inner centered">
+
+        <div class="eyebrow reveal">
+          Little memories
+        </div>
+
+        <h2 class="memory-heading reveal reveal-delay-1">
+          Moments worth keeping.
+        </h2>
+
+        <p class="memory-intro reveal reveal-delay-2">
+          Seven little pieces of a life filled with memories,
+          laughter, love, and moments worth holding onto.
+          <br><br>
+          For my Bka, my Pebbles, every one of them matters.
+        </p>
+
+        <div
+          class="memory-stage reveal reveal-delay-3"
+          id="memoryStage"
+          aria-label="Birthday memory album"
+        ></div>
+
+        <div
+          class="memory-meta reveal reveal-delay-3"
+        >
+
+          <button
+            class="memory-btn"
+            id="memoryPrev"
+            type="button"
+            aria-label="Previous memory"
+          >
+            ←
+          </button>
+
+          <div
+            class="memory-counter"
+            id="memoryCounter"
+            aria-live="polite"
+          >
+            1 / 7
+          </div>
+
+          <button
+            class="memory-btn"
+            id="memoryNext"
+            type="button"
+            aria-label="Next memory"
+          >
+            →
+          </button>
+
+        </div>
+
+        <div class="memory-progress">
+          <div
+            class="memory-progress-fill"
+            id="memoryProgress"
+          ></div>
+        </div>
+
+        <div class="memory-hint">
+          Tap a photo to remember it
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =====================================================
+         LETTER
+    ====================================================== -->
+
+    <section
+      class="story-chapter letter-chapter"
+      id="chapterLetter"
+      data-chapter="2"
+    >
+
+      <div class="chapter-inner">
+
+        <div class="letter-shell">
+
+          <div class="eyebrow reveal">
+            A letter from Mom
+          </div>
+
+          <h2 class="letter-title reveal reveal-delay-1">
+            For my beloved daughter.
+          </h2>
+
+          <div
+            class="letter-body reveal reveal-delay-2"
+            id="letterBody"
+          ></div>
+
+          <div class="letter-signoff reveal reveal-delay-3">
+            With all my love,
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =====================================================
+         MAKE A WISH
+    ====================================================== -->
+
+    <section
+      class="story-chapter wish-chapter"
+      id="chapterWish"
+      data-chapter="3"
+    >
+
+      <div class="chapter-inner centered">
+
+        <div class="wish-wrap reveal">
+
+          <div class="eyebrow">
+            Before we finish
+          </div>
+
+          <h2 class="wish-title">
+            Make a wish
+            <br>
+            <em>for 48.</em>
+          </h2>
+
+          <p class="wish-subtitle">
+            Hold the light and make your wish quietly.
+            <br>
+            Some things are worth asking God for.
+          </p>
+
+          <button
+            class="wish-button"
+            id="wishButton"
+            type="button"
+            aria-label="Press and hold to make a birthday wish"
+          >
+
+            <span class="wish-ring"></span>
+
+            <span
+              class="wish-button-label"
+              id="wishButtonLabel"
+            >
+              Press &amp; hold
+            </span>
+
+          </button>
+
+          <div
+            class="wish-status"
+            id="wishStatus"
+            aria-live="polite"
+          >
+            Your wish is yours alone.
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =====================================================
+         FINAL
+    ====================================================== -->
+
+    <section
+      class="story-chapter final-chapter"
+      id="chapterFinal"
+      data-chapter="4"
+    >
+
+      <div class="chapter-inner centered">
+
+        <div class="eyebrow reveal">
+          One more thing
+        </div>
+
+        <h2 class="final-title reveal reveal-delay-1">
+          A birthday prayer
+          <br>
+          just for you.
+        </h2>
+
+        <p class="final-subtitle reveal reveal-delay-2">
+          Before this little celebration ends,
+          there's one more blessing waiting for you.
+        </p>
+
+        <button
+          class="prayer-button reveal reveal-delay-3"
+          id="prayerButton"
+          type="button"
+        >
+          Read a Birthday Prayer &amp; Blessing
+        </button>
+
+        <div
+          class="final-mark reveal reveal-delay-3"
+          id="finalMark"
+        >
+          Happy 48th Birthday, Pebbles ♥
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =======================================================
+       AUDIO CONTROL
+  ======================================================== -->
+
+  <button
+    class="audio-button"
+    id="audioButton"
+    type="button"
+    aria-label="Play birthday music"
+    aria-pressed="false"
+  >
+    <span class="audio-icon">♪</span>
+  </button>
+
+  <!-- =======================================================
+       FULL MEMORY VIEWER
+  ======================================================== -->
+
+  <div
+    class="memory-viewer"
+    id="memoryViewer"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="memoryViewerCaption"
+    aria-hidden="true"
+  >
+
+    <div class="memory-viewer-inner">
+
+      <button
+        class="memory-viewer-close"
+        id="memoryViewerClose"
+        type="button"
+        aria-label="Close memory"
+      >
+        ×
+      </button>
+
+      <div class="memory-viewer-photo-wrap">
+
+        <img
+          class="memory-viewer-photo"
+          id="memoryViewerPhoto"
+          src=""
+          alt=""
+          draggable="false"
+        />
+
+      </div>
+
+      <div
+        class="memory-viewer-caption"
+        id="memoryViewerCaption"
+      ></div>
+
+      <div
+        class="memory-viewer-count"
+        id="memoryViewerCount"
+      ></div>
+
+      <!--
+        Navigation intentionally comes AFTER the count.
+        On mobile this means the arrows can never cover
+        the photo caption.
+      -->
+
+      <div class="memory-viewer-nav">
+
+        <button
+          id="viewerPrev"
+          type="button"
+          aria-label="Previous memory"
+        >
+          ←
+        </button>
+
+        <button
+          id="viewerNext"
+          type="button"
+          aria-label="Next memory"
+        >
+          →
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =======================================================
+       PRAYER MODAL
+  ======================================================== -->
+
+  <div
+    class="modal"
+    id="prayerModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="prayerTitle"
+  >
+
+    <div class="modal-card">
+
+      <h2 id="prayerTitle">
+        A Birthday Prayer
+      </h2>
+
+      <div
+        class="prayer-text"
+        id="prayerText"
+      ></div>
+
+      <button
+        class="modal-close"
+        id="modalClose"
+        type="button"
+      >
+        Close
+      </button>
+
+    </div>
+
+  </div>
+
+  <script>
+    /* =========================================================
+       CONFIG
+    ========================================================= */
+
+    const CONFIG = {
+
+      name: "Toya",
+
+      nicknames: [
+        "Bka",
+        "Pebbles"
+      ],
+
+      age: 48,
+
+      letter: [
+
+        `This is a great opportunity to tell you just how Godly proud and happy I am for the blessing of "YOU"!`,
+
+        `I thank God for allowing me to see and enjoy such a beautiful daughter from birth to this point in your life!`,
+
+        `🎉“HAPPY 48th BIRTHDAY”🎉`,
+
+        `I thank God for the woman that you are and for knowing that He’s not done with you yet! You have been and continue to be a woman of strength, courage and humbleness beyond measure!`,
+
+        `I just want to say: “I LOVE YOU! I APPRECIATE YOU!! I AM SO GODLY PROUD OF YOU!!! And I pray God blesses you with many more years of His Grace, Blessings, and Favor!!!”`
+
+      ],
+
+      prayer: [
+
+        `Heavenly Father,`,
+
+        `Thank You for the beautiful gift of {{name}}.`,
+
+        `Thank You for her life, her heart, her strength, her laughter, and all the joy she brings to the people around her.`,
+
+        `As she begins another year, please walk beside her in every season.`,
+
+        `Give her peace when she feels uncertain, strength when she feels tired, wisdom when she has difficult decisions to make, and joy that reaches far beyond this birthday.`,
+
+        `Protect her, guide her, and continue to surround her with people who genuinely love and appreciate her.`,
+
+        `May this next chapter be filled with beautiful opportunities, meaningful memories, laughter, peace, and moments that remind her just how deeply she is loved.`,
+
+        `And above everything else, may she always know that she is a blessing.`,
+
+        `In Jesus' name, Amen.`
+
+      ],
+
+      photos: [
+
+        {
+          src: "photo-1.jpg",
+          caption: "A moment I'll always treasure."
+        },
+
+        {
+          src: "photo-2.jpg",
+          caption: "One of so many beautiful memories."
+        },
+
+        {
+          src: "photo-3.jpg",
+          caption: "And there are so many more."
+        },
+
+        {
+          src: "photo-4.jpg",
+          position: "5% center",
+          caption: "Another beautiful chapter."
+        },
+
+        {
+          src: "photo-5.jpg",
+          caption: "A memory worth holding onto."
+        },
+
+        {
+          src: "photo-6.jpg",
+          caption: "So much life. So much love."
+        },
+
+        {
+          src: "photo-7.jpg",
+          caption: "And more memories still ahead."
+        }
+
+      ],
+
+      audio: "soul-instrumental.mp3"
+
+    };
+
+
+    /* =========================================================
+       DOM
+    ========================================================= */
+
+    const $ = selector =>
+      document.querySelector(selector);
+
+
+    const envelope =
+      document.getElementById("envelope");
+
+    const envelopePaper =
+      document.getElementById("envelopePaper");
+
+    const envelopeFlap =
+      document.getElementById("envelopeFlap");
+
+    const waxSeal =
+      document.getElementById("waxSeal");
+
+    const envelopeHint =
+      document.getElementById("envelopeHint");
+
+    const envelopeScreen =
+      document.getElementById("envelopeScreen");
+
+    const envelopeName =
+      document.getElementById("envelopeName");
+
+    const heroName =
+      document.getElementById("heroName");
+
+    const birthday48Intro =
+      document.getElementById("birthday48Intro");
+
+    const birthday48Name =
+      document.getElementById("birthday48Name");
+
+
+    envelopeName.textContent =
+      CONFIG.name;
+
+    heroName.textContent =
+      CONFIG.name;
+
+    birthday48Name.textContent =
+      CONFIG.name;
+
+
+    /* =========================================================
+       AUDIO
+    ========================================================= */
+
+    const birthdayAudio =
+      document.getElementById("birthdayAudio");
+
+    const audioButton =
+      document.getElementById("audioButton");
+
+    let audioContext = null;
+    let analyser = null;
+    let sourceNode = null;
+    let audioData = null;
+    let audioReady = false;
+
+    if (
+      birthdayAudio &&
+      CONFIG.audio
+    ) {
+      birthdayAudio.src = CONFIG.audio;
+      birthdayAudio.load();
+    }
+
+
+    function setupAudioAnalyser() {
+
+      if (
+        audioReady ||
+        !birthdayAudio
+      ) {
+        return;
+      }
+
+      try {
+
+        audioContext =
+          new (
+            window.AudioContext ||
+            window.webkitAudioContext
+          )();
+
+        analyser =
+          audioContext.createAnalyser();
+
+        analyser.fftSize = 128;
+
+        /*
+          Higher smoothing makes the reaction feel
+          musical and organic instead of jittery.
+        */
+        analyser.smoothingTimeConstant =
+          .88;
+
+        sourceNode =
+          audioContext.createMediaElementSource(
+            birthdayAudio
+          );
+
+        sourceNode.connect(
+          analyser
+        );
+
+        analyser.connect(
+          audioContext.destination
+        );
+
+        audioData =
+          new Uint8Array(
+            analyser.frequencyBinCount
+          );
+
+        audioReady = true;
+
+      } catch (error) {
+
+        console.warn(
+          "Audio analyser unavailable:",
+          error
+        );
+
+      }
+
+    }
+
+
+    function playBirthdayMusic() {
+
+      if (!birthdayAudio) {
+        return;
+      }
+
+      birthdayAudio.volume = .42;
+
+      setupAudioAnalyser();
+
+      if (
+        audioContext &&
+        audioContext.state === "suspended"
+      ) {
+
+        audioContext
+          .resume()
+          .catch(() => {});
+
+      }
+
+      const playPromise =
+        birthdayAudio.play();
+
+      if (
+        playPromise &&
+        typeof playPromise.then === "function"
+      ) {
+
+        playPromise
+          .then(() => {
+
+            document.body.classList.add(
+              "music-active"
+            );
+
+            audioButton.classList.add(
+              "playing"
+            );
+
+            audioButton.setAttribute(
+              "aria-pressed",
+              "true"
+            );
+
+            audioButton.setAttribute(
+              "aria-label",
+              "Pause birthday music"
+            );
+
+          })
+          .catch(error => {
+
+            console.warn(
+              "Music could not start:",
+              error
+            );
+
+          });
+
+      } else {
+
+        document.body.classList.add(
+          "music-active"
+        );
+
+        audioButton.classList.add(
+          "playing"
+        );
+
+        audioButton.setAttribute(
+          "aria-pressed",
+          "true"
+        );
+
+        audioButton.setAttribute(
+          "aria-label",
+          "Pause birthday music"
+        );
+
+      }
+
+    }
+
+
+    function pauseBirthdayMusic() {
+
+      if (!birthdayAudio) {
+        return;
+      }
+
+      birthdayAudio.pause();
+
+      document.body.classList.remove(
+        "music-active"
+      );
+
+      audioButton.classList.remove(
+        "playing"
+      );
+
+      audioButton.setAttribute(
+        "aria-pressed",
+        "false"
+      );
+
+      audioButton.setAttribute(
+        "aria-label",
+        "Play birthday music"
+      );
+
+    }
+
+
+    audioButton.addEventListener(
+      "click",
+      async () => {
+
+        if (
+          birthdayAudio &&
+          !birthdayAudio.paused
+        ) {
+
+          pauseBirthdayMusic();
+
+        } else {
+
+          await playBirthdayMusic();
+
+        }
+
+      }
+    );
+
+
+    /* =========================================================
+       AUDIO REACTIVE ATMOSPHERE
+    ========================================================= */
+
+    let audioEnergy = 0;
+
+    function updateAudioVisuals() {
+
+      if (
+        analyser &&
+        audioData &&
+        birthdayAudio &&
+        !birthdayAudio.paused
+      ) {
+
+        analyser.getByteFrequencyData(
+          audioData
+        );
+
+        let sum = 0;
+
+        /*
+          Use the lower/mid frequencies because they
+          produce a warmer, slower response than
+          reacting equally to every frequency.
+        */
+
+        const limit =
+          Math.floor(
+            audioData.length * .55
+          );
+
+        for (
+          let i = 0;
+          i < limit;
+          i++
+        ) {
+          sum += audioData[i];
+        }
+
+        const average =
+          sum / limit / 255;
+
+        audioEnergy +=
+          (average - audioEnergy) * .08;
+
+      } else {
+
+        audioEnergy *= .96;
+
+      }
+
+      /*
+        Expose the energy to CSS so the rest of the
+        atmosphere can breathe with the music.
+      */
+
+      document.documentElement.style.setProperty(
+        "--audio-energy",
+        audioEnergy.toFixed(4)
+      );
+
+      const ambientLight =
+        document.getElementById(
+          "ambientLight"
+        );
+
+      if (ambientLight) {
+
+        const scale =
+          1 + audioEnergy * .35;
+
+        ambientLight.style.transform =
+          `translate(-50%,-50%) scale(${scale})`;
+
+        ambientLight.style.opacity =
+          .68 + audioEnergy * .3;
+
+      }
+
+      requestAnimationFrame(
+        updateAudioVisuals
+      );
+
+    }
+
+    updateAudioVisuals();
+
+
+    /* =========================================================
+       AMBIENT PARTICLES
+    ========================================================= */
+
+    const ambientCanvas =
+      document.getElementById(
+        "ambientCanvas"
+      );
+
+    const ambientCtx =
+      ambientCanvas.getContext("2d");
+
+    let particles = [];
+
+
+    function resizeAmbientCanvas() {
+
+      const dpr =
+        Math.min(
+          window.devicePixelRatio || 1,
+          2
+        );
+
+      ambientCanvas.width =
+        window.innerWidth * dpr;
+
+      ambientCanvas.height =
+        window.innerHeight * dpr;
+
+      ambientCanvas.style.width =
+        window.innerWidth + "px";
+
+      ambientCanvas.style.height =
+        window.innerHeight + "px";
+
+      ambientCtx.setTransform(
+        dpr,
+        0,
+        0,
+        dpr,
+        0,
+        0
+      );
+
+    }
+
+
+    function createParticles() {
+
+      particles = [];
+
+      const count =
+        Math.min(
+          70,
+          Math.floor(
+            window.innerWidth / 8
+          )
+        );
+
+      for (
+        let i = 0;
+        i < count;
+        i++
+      ) {
+
+        particles.push({
+
+          x:
+            Math.random() *
+            window.innerWidth,
+
+          y:
+            Math.random() *
+            window.innerHeight,
+
+          size:
+            Math.random() * 1.6 + .5,
+
+          speed:
+            Math.random() * .18 + .04,
+
+          drift:
+            Math.random() * .3 - .15,
+
+          alpha:
+            Math.random() * .35 + .08,
+
+          phase:
+            Math.random() *
+            Math.PI * 2
+
+        });
+
+      }
+
+    }
+
+
+    function drawAmbient() {
+
+      ambientCtx.clearRect(
+        0,
+        0,
+        window.innerWidth,
+        window.innerHeight
+      );
+
+      for (const particle of particles) {
+
+        /*
+          Music subtly increases the movement,
+          rather than making particles explode around.
+        */
+
+        particle.y -=
+          particle.speed +
+          audioEnergy * .5;
+
+        particle.x +=
+          particle.drift +
+          Math.sin(
+            performance.now() * .0005 +
+            particle.phase
+          ) * (
+            .08 +
+            audioEnergy * .12
+          );
+
+        if (
+          particle.y < -10
+        ) {
+
+          particle.y =
+            window.innerHeight + 10;
+
+        }
+
+        if (
+          particle.x < -10
+        ) {
+
+          particle.x =
+            window.innerWidth + 10;
+
+        }
+
+        if (
+          particle.x >
+          window.innerWidth + 10
+        ) {
+
+          particle.x = -10;
+
+        }
+
+        const alpha =
+          particle.alpha *
+          (1 + audioEnergy * 1.5);
+
+        ambientCtx.beginPath();
+
+        ambientCtx.arc(
+          particle.x,
+          particle.y,
+          particle.size +
+            audioEnergy * .8,
+          0,
+          Math.PI * 2
+        );
+
+        ambientCtx.fillStyle =
+          `rgba(217,119,6,${alpha})`;
+
+        ambientCtx.fill();
+
+      }
+
+      requestAnimationFrame(
+        drawAmbient
+      );
+
+    }
+
+
+    resizeAmbientCanvas();
+    createParticles();
+    drawAmbient();
+
+
+    window.addEventListener(
+      "resize",
+      () => {
+
+        resizeAmbientCanvas();
+        createParticles();
+
+      }
+    );
+
+
+    /* =========================================================
+       LETTER
+    ========================================================= */
+
+    const letterBody =
+      document.getElementById(
+        "letterBody"
+      );
+
+
+    function buildLetter() {
+
+      letterBody.innerHTML = "";
+
+      CONFIG.letter.forEach(
+        paragraph => {
+
+          const p =
+            document.createElement("p");
+
+          let text =
+            paragraph;
+
+          const phrases = [
+
+            "I thank God",
+
+            "HAPPY 48th BIRTHDAY",
+
+            "strength, courage and humbleness",
+
+            "I LOVE YOU!",
+
+            "I APPRECIATE YOU!!",
+
+            "GODLY PROUD OF YOU!!!"
+
+          ];
+
+          phrases.forEach(
+            phrase => {
+
+              if (
+                text.includes(phrase)
+              ) {
+
+                text =
+                  text.replace(
+                    phrase,
+                    `<span
+                      class="interactive-phrase"
+                      data-memory="${phrase}"
+                      role="button"
+                      tabindex="0"
+                    >${phrase}</span>`
+                  );
+
+              }
+
+            }
+          );
+
+          p.innerHTML =
+            text;
+
+          letterBody.appendChild(
+            p
+          );
+
+        }
+      );
+
+
+      document
+        .querySelectorAll(
+          ".interactive-phrase"
+        )
+        .forEach(
+          phrase => {
+
+            const trigger =
+              () => burstMemory(
+                phrase
+              );
+
+            phrase.addEventListener(
+              "click",
+              trigger
+            );
+
+            phrase.addEventListener(
+              "keydown",
+              event => {
+
+                if (
+                  event.key === "Enter" ||
+                  event.key === " "
+                ) {
+
+                  event.preventDefault();
+                  trigger();
+
+                }
+
+              }
+            );
+
+          }
+        );
+
+    }
+
+
+    function burstMemory(element) {
+
+      const rect =
+        element.getBoundingClientRect();
+
+      for (
+        let i = 0;
+        i < 8;
+        i++
+      ) {
+
+        const particle =
+          document.createElement(
+            "span"
+          );
+
+        particle.textContent =
+          Math.random() > .45
+            ? "♥"
+            : "✦";
+
+        particle.style.position =
+          "fixed";
+
+        particle.style.left =
+          rect.left +
+          rect.width / 2 +
+          "px";
+
+        particle.style.top =
+          rect.top +
+          rect.height / 2 +
+          "px";
+
+        particle.style.zIndex =
+          "90";
+
+        particle.style.pointerEvents =
+          "none";
+
+        particle.style.color =
+          i % 2
+            ? "#E9D5FF"
+            : "#D97706";
+
+        document.body.appendChild(
+          particle
+        );
+
+        const x =
+          (Math.random() - .5) *
+          150;
+
+        const y =
+          -Math.random() * 120 -
+          20;
+
+        const duration =
+          Math.random() * .7 +
+          .65;
+
+        particle.animate(
+          [
+            {
+              transform:
+                "translate(-50%,-50%) scale(1)",
+              opacity: 1
+            },
+            {
+              transform:
+                `translate(
+                  calc(-50% + ${x}px),
+                  calc(-50% + ${y}px)
+                )
+                scale(.2)`,
+              opacity: 0
+            }
+          ],
+          {
+            duration:
+              duration * 1000,
+            easing:
+              "cubic-bezier(.22,.61,.36,1)",
+            fill: "forwards"
+          }
+        );
+
+        setTimeout(
+          () => particle.remove(),
+          duration * 1000 + 50
+        );
+
+      }
+
+    }
+
+
+    buildLetter();
+
+
+    /* =========================================================
+       MEMORY ALBUM
+    ========================================================= */
+
+    const memoryStage =
+      document.getElementById(
+        "memoryStage"
+      );
+
+    const memoryPrev =
+      document.getElementById(
+        "memoryPrev"
+      );
+
+    const memoryNext =
+      document.getElementById(
+        "memoryNext"
+      );
+
+    const memoryCounter =
+      document.getElementById(
+        "memoryCounter"
+      );
+
+    const memoryProgress =
+      document.getElementById(
+        "memoryProgress"
+      );
+
+    let memoryIndex = 0;
+    let memoryTimer = null;
+    let memoryViewerOpen = false;
+
+    const AUTO_DELAY = 4300;
+
+
+    function renderMemoryCards() {
+
+      memoryStage.innerHTML = "";
+
+      CONFIG.photos.forEach(
+        (photo, index) => {
+
+          const card =
+            document.createElement(
+              "div"
+            );
+
+          card.className =
+            "memory-card";
+
+          card.dataset.index =
+            index;
+
+          card.innerHTML = `
+
+            <img
+              src="${photo.src}"
+              alt="${photo.caption}"
+              style="object-position: ${photo.position || "center center"};"
+              draggable="false"
+            >
+
+            <div class="memory-caption">
+              <span>${photo.caption}</span>
+            </div>
+
+          `;
+
+          card.addEventListener(
+            "click",
+            () => {
+
+              if (
+                index === memoryIndex
+              ) {
+
+                openMemoryViewer(
+                  memoryIndex
+                );
+
+              } else {
+
+                goToMemory(
+                  index
+                );
+
+              }
+
+            }
+          );
+
+          memoryStage.appendChild(
+            card
+          );
+
+        }
+      );
+
+      updateMemory(false);
+
+    }
+
+
+    function updateMemory(
+      animate = true
+    ) {
+
+      const cards =
+        [
+          ...memoryStage.querySelectorAll(
+            ".memory-card"
+          )
+        ];
+
+      const total =
+        cards.length;
+
+      cards.forEach(
+        (card, index) => {
+
+          let offset =
+            index - memoryIndex;
+
+          if (
+            offset >
+            total / 2
+          ) {
+            offset -= total;
+          }
+
+          if (
+            offset <
+            -total / 2
+          ) {
+            offset += total;
+          }
+
+          const isActive =
+            offset === 0;
+
+          const abs =
+            Math.abs(offset);
+
+          const visible =
+            abs <= 2;
+
+          let x = 0;
+          let y = 0;
+          let rotation = 0;
+          let scale = 1;
+          let opacity = 1;
+          let blur = 0;
+
+          if (offset === 0) {
+
+            x = 0;
+            y = 0;
+            rotation = 0;
+            scale = 1;
+            opacity = 1;
+            blur = 0;
+
+          } else if (offset === 1) {
+
+            x = 34;
+            y = 13;
+            rotation = 4.5;
+            scale = .91;
+            opacity = .58;
+            blur = .15;
+
+          } else if (offset === -1) {
+
+            x = -34;
+            y = 13;
+            rotation = -4.5;
+            scale = .91;
+            opacity = .58;
+            blur = .15;
+
+          } else if (offset === 2) {
+
+            x = 58;
+            y = 27;
+            rotation = 7;
+            scale = .83;
+            opacity = .2;
+            blur = .5;
+
+          } else if (offset === -2) {
+
+            x = -58;
+            y = 27;
+            rotation = -7;
+            scale = .83;
+            opacity = .2;
+            blur = .5;
+
+          } else {
+
+            x =
+              offset > 0
+                ? 75
+                : -75;
+
+            y = 35;
+
+            rotation =
+              offset > 0
+                ? 9
+                : -9;
+
+            scale = .76;
+            opacity = 0;
+            blur = 1;
+
+          }
+
+          if (!visible) {
+            opacity = 0;
+          }
+
+          card.style.transition =
+            animate
+              ? `
+                transform .72s cubic-bezier(.22,.61,.36,1),
+                opacity .5s ease,
+                filter .5s ease
+              `
+              : "none";
+
+          card.style.transform =
+            `
+              translate3d(
+                ${x}px,
+                ${y}px,
+                0
+              )
+              rotate(${rotation}deg)
+              scale(${scale})
+            `;
+
+          card.style.opacity =
+            opacity;
+
+          card.style.filter =
+            `blur(${blur}px)`;
+
+          card.style.zIndex =
+            isActive
+              ? 30
+              : 30 - abs;
+
+          card.classList.toggle(
+            "active",
+            isActive
+          );
+
+        }
+      );
+
+
+      const current =
+        memoryIndex + 1;
+
+      const totalPhotos =
+        CONFIG.photos.length;
+
+      memoryCounter.textContent =
+        `${current} / ${totalPhotos}`;
+
+      memoryProgress.style.width =
+        `${(current / totalPhotos) * 100}%`;
+
+    }
+
+
+    function goToMemory(
+      index,
+      restartTimer = true
+    ) {
+
+      memoryIndex =
+        (
+          index +
+          CONFIG.photos.length
+        ) %
+        CONFIG.photos.length;
+
+      updateMemory();
+
+      if (restartTimer) {
+        restartMemoryTimer();
+      }
+
+    }
+
+
+    function nextMemory(
+      restartTimer = true
+    ) {
+
+      goToMemory(
+        memoryIndex + 1,
+        restartTimer
+      );
+
+    }
+
+
+    function previousMemory() {
+
+      goToMemory(
+        memoryIndex - 1,
+        true
+      );
+
+    }
+
+
+    memoryNext.addEventListener(
+      "click",
+      () => nextMemory()
+    );
+
+    memoryPrev.addEventListener(
+      "click",
+      previousMemory
+    );
+
+
+    /* =========================================================
+       AUTOMATIC PHOTO PLAYBACK
+    ========================================================= */
+
+    function startMemoryTimer() {
+
+      clearInterval(
+        memoryTimer
+      );
+
+      memoryTimer =
+        setInterval(
+          () => {
+
+            if (
+              memoryViewerOpen
+            ) {
+              return;
+            }
+
+            const rect =
+              memoryStage.getBoundingClientRect();
+
+            const visible =
+              rect.top <
+              window.innerHeight * .75 &&
+              rect.bottom >
+              window.innerHeight * .2;
+
+            if (visible) {
+              nextMemory(false);
+            }
+
+          },
+          AUTO_DELAY
+        );
+
+    }
+
+
+    function restartMemoryTimer() {
+
+      clearInterval(
+        memoryTimer
+      );
+
+      startMemoryTimer();
+
+    }
+
+
+    renderMemoryCards();
+    startMemoryTimer();
+
+
+    /* =========================================================
+       MEMORY SWIPE
+    ========================================================= */
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+
+    memoryStage.addEventListener(
+      "touchstart",
+      event => {
+
+        touchStartX =
+          event.changedTouches[0].clientX;
+
+        touchStartY =
+          event.changedTouches[0].clientY;
+
+      },
+      {
+        passive: true
+      }
+    );
+
+
+    memoryStage.addEventListener(
+      "touchend",
+      event => {
+
+        const endX =
+          event.changedTouches[0].clientX;
+
+        const endY =
+          event.changedTouches[0].clientY;
+
+        const distanceX =
+          endX - touchStartX;
+
+        const distanceY =
+          endY - touchStartY;
+
+        if (
+          Math.abs(distanceX) > 45 &&
+          Math.abs(distanceX) >
+          Math.abs(distanceY)
+        ) {
+
+          if (
+            distanceX < 0
+          ) {
+
+            nextMemory();
+
+          } else {
+
+            previousMemory();
+
+          }
+
+        }
+
+      },
+      {
+        passive: true
+      }
+    );
+
+
+    /* =========================================================
+       FULL-SCREEN MEMORY VIEWER
+    ========================================================= */
+
+    const memoryViewer =
+      document.getElementById(
+        "memoryViewer"
+      );
+
+    const memoryViewerPhoto =
+      document.getElementById(
+        "memoryViewerPhoto"
+      );
+
+    const memoryViewerCaption =
+      document.getElementById(
+        "memoryViewerCaption"
+      );
+
+    const memoryViewerCount =
+      document.getElementById(
+        "memoryViewerCount"
+      );
+
+    const memoryViewerClose =
+      document.getElementById(
+        "memoryViewerClose"
+      );
+
+    const viewerPrev =
+      document.getElementById(
+        "viewerPrev"
+      );
+
+    const viewerNext =
+      document.getElementById(
+        "viewerNext"
+      );
+
+
+    function updateMemoryViewer() {
+
+      const photo =
+        CONFIG.photos[
+          memoryIndex
+        ];
+
+      memoryViewerPhoto.style.objectPosition =
+        photo.position ||
+        "center center";
+
+      memoryViewerPhoto.src =
+        photo.src;
+
+      memoryViewerPhoto.alt =
+        photo.caption;
+
+      memoryViewerCaption.textContent =
+        photo.caption;
+
+      memoryViewerCount.textContent =
+        `Memory ${memoryIndex + 1} of ${CONFIG.photos.length}`;
+
+    }
+
+
+    function openMemoryViewer(
+      index = memoryIndex
+    ) {
+
+      memoryIndex =
+        index;
+
+      updateMemory();
+
+      updateMemoryViewer();
+
+      memoryViewerOpen =
+        true;
+
+      document.body.classList.add(
+        "viewer-open"
+      );
+
+      memoryViewer.classList.add(
+        "is-open"
+      );
+
+      memoryViewer.setAttribute(
+        "aria-hidden",
+        "false"
+      );
+
+      clearInterval(
+        memoryTimer
+      );
+
+      setTimeout(
+        () => {
+          memoryViewerClose.focus();
+        },
+        50
+      );
+
+    }
+
+
+    function closeMemoryViewer() {
+
+      memoryViewerOpen =
+        false;
+
+      memoryViewer.classList.remove(
+        "is-open"
+      );
+
+      memoryViewer.setAttribute(
+        "aria-hidden",
+        "true"
+      );
+
+      document.body.classList.remove(
+        "viewer-open"
+      );
+
+      restartMemoryTimer();
+
+    }
+
+
+    function viewerNextMemory() {
+
+      nextMemory(
+        false
+      );
+
+      updateMemoryViewer();
+
+    }
+
+
+    function viewerPreviousMemory() {
+
+      previousMemory();
+
+      updateMemoryViewer();
+
+    }
+
+
+    memoryViewerClose.addEventListener(
+      "click",
+      closeMemoryViewer
+    );
+
+    viewerNext.addEventListener(
+      "click",
+      viewerNextMemory
+    );
+
+    viewerPrev.addEventListener(
+      "click",
+      viewerPreviousMemory
+    );
+
+
+    memoryViewer.addEventListener(
+      "click",
+      event => {
+
+        if (
+          event.target ===
+          memoryViewer
+        ) {
+
+          closeMemoryViewer();
+
+        }
+
+      }
+    );
+
+
+    /* =========================================================
+       FULL-SCREEN MEMORY SWIPE
+    ========================================================= */
+
+    let viewerTouchStartX = 0;
+    let viewerTouchStartY = 0;
+
+
+    memoryViewer.addEventListener(
+      "touchstart",
+      event => {
+
+        viewerTouchStartX =
+          event.changedTouches[0].clientX;
+
+        viewerTouchStartY =
+          event.changedTouches[0].clientY;
+
+      },
+      {
+        passive: true
+      }
+    );
+
+
+    memoryViewer.addEventListener(
+      "touchend",
+      event => {
+
+        if (!memoryViewerOpen) {
+          return;
+        }
+
+        const endX =
+          event.changedTouches[0].clientX;
+
+        const endY =
+          event.changedTouches[0].clientY;
+
+        const dx =
+          endX - viewerTouchStartX;
+
+        const dy =
+          endY - viewerTouchStartY;
+
+        if (
+          Math.abs(dx) > 50 &&
+          Math.abs(dx) > Math.abs(dy)
+        ) {
+
+          if (dx < 0) {
+            viewerNextMemory();
+          } else {
+            viewerPreviousMemory();
+          }
+
+        }
+
+      },
+      {
+        passive: true
+      }
+    );
+
+
+    /* =========================================================
+       MAKE A WISH
+    ========================================================= */
+
+    const wishButton =
+      document.getElementById(
+        "wishButton"
+      );
+
+    const wishButtonLabel =
+      document.getElementById(
+        "wishButtonLabel"
+      );
+
+    const wishStatus =
+      document.getElementById(
+        "wishStatus"
+      );
+
+    const wishChapter =
+      document.getElementById(
+        "chapterWish"
+      );
+
+    let wishHolding = false;
+    let wishHoldTimer = null;
+    let wishProgressTimer = null;
+    let wishCompleted = false;
+    let wishStart = 0;
+
+    const WISH_DURATION =
+      1800;
+
+
+    function setWishProgress(
+      progress
+    ) {
+
+      wishButton.style.setProperty(
+        "--wish-progress",
+        `${progress * 360}deg`
+      );
+
+    }
+
+
+    function wishBurst() {
+
+      const rect =
+        wishButton.getBoundingClientRect();
+
+      const centerX =
+        rect.left +
+        rect.width / 2;
+
+      const centerY =
+        rect.top +
+        rect.height / 2;
+
+      for (
+        let i = 0;
+        i < 28;
+        i++
+      ) {
+
+        const star =
+          document.createElement(
+            "span"
+          );
+
+        star.className =
+          "wish-star";
+
+        star.textContent =
+          Math.random() > .4
+            ? "✦"
+            : "·";
+
+        star.style.left =
+          centerX + "px";
+
+        star.style.top =
+          centerY + "px";
+
+        document.body.appendChild(
+          star
+        );
+
+        const angle =
+          Math.random() *
+          Math.PI *
+          2;
+
+        const distance =
+          70 +
+          Math.random() *
+          150;
+
+        const x =
+          Math.cos(angle) *
+          distance;
+
+        const y =
+          Math.sin(angle) *
+          distance;
+
+        const duration =
+          900 +
+          Math.random() *
+          900;
+
+        star.animate(
+          [
+            {
+              transform:
+                "translate(-50%,-50%) scale(.4)",
+              opacity: 0
+            },
+            {
+              transform:
+                "translate(-50%,-50%) scale(1)",
+              opacity: 1,
+              offset: .15
+            },
+            {
+              transform:
+                `translate(
+                  calc(-50% + ${x}px),
+                  calc(-50% + ${y}px)
+                )
+                scale(.15)`,
+              opacity: 0
+            }
+          ],
+          {
+            duration,
+            easing:
+              "cubic-bezier(.22,.61,.36,1)",
+            fill: "forwards"
+          }
+        );
+
+        setTimeout(
+          () => star.remove(),
+          duration + 50
+        );
+
+      }
+
+    }
+
+
+    function finishWish() {
+
+      wishCompleted =
+        true;
+
+      wishHolding =
+        false;
+
+      clearTimeout(
+        wishHoldTimer
+      );
+
+      clearInterval(
+        wishProgressTimer
+      );
+
+      wishButton.classList.remove(
+        "holding"
+      );
+
+      setWishProgress(
+        1
+      );
+
+      wishButtonLabel.textContent =
+        "Wish made";
+
+      wishStatus.textContent =
+        "May it find its way to you.";
+
+      wishChapter.classList.add(
+        "wish-complete"
+      );
+
+      wishBurst();
+
+      if (
+        navigator.vibrate
+      ) {
+        navigator.vibrate(
+          [25, 35, 25]
+        );
+      }
+
+    }
+
+
+    function startWishHold(
+      event
+    ) {
+
+      event.preventDefault();
+
+      if (
+        wishCompleted ||
+        wishHolding
+      ) {
+        return;
+      }
+
+      wishHolding =
+        true;
+
+      wishStart =
+        performance.now();
+
+      wishButton.classList.add(
+        "holding"
+      );
+
+      wishButtonLabel.textContent =
+        "Keep holding";
+
+      wishStatus.textContent =
+        "Make it count.";
+
+      clearInterval(
+        wishProgressTimer
+      );
+
+      wishProgressTimer =
+        setInterval(
+          () => {
+
+            const elapsed =
+              performance.now() -
+              wishStart;
+
+            const progress =
+              Math.min(
+                elapsed /
+                WISH_DURATION,
+                1
+              );
+
+            setWishProgress(
+              progress
+            );
+
+            if (
+              progress >= 1
+            ) {
+
+              finishWish();
+
+            }
+
+          },
+          16
+        );
+
+      wishHoldTimer =
+        setTimeout(
+          finishWish,
+          WISH_DURATION
+        );
+
+    }
+
+
+    function cancelWishHold() {
+
+      if (
+        !wishHolding ||
+        wishCompleted
+      ) {
+        return;
+      }
+
+      wishHolding =
+        false;
+
+      clearTimeout(
+        wishHoldTimer
+      );
+
+      clearInterval(
+        wishProgressTimer
+      );
+
+      wishButton.classList.remove(
+        "holding"
+      );
+
+      setWishProgress(
+        0
+      );
+
+      wishButtonLabel.textContent =
+        "Press & hold";
+
+      wishStatus.textContent =
+        "Your wish is yours alone.";
+
+    }
+
+
+    wishButton.addEventListener(
+      "pointerdown",
+      startWishHold
+    );
+
+    wishButton.addEventListener(
+      "pointerup",
+      () => {
+
+        if (
+          wishHolding &&
+          !wishCompleted
+        ) {
+          cancelWishHold();
+        }
+
+      }
+    );
+
+    wishButton.addEventListener(
+      "pointercancel",
+      cancelWishHold
+    );
+
+    wishButton.addEventListener(
+      "pointerleave",
+      event => {
+
+        if (
+          event.pointerType === "mouse" &&
+          wishHolding
+        ) {
+          cancelWishHold();
+        }
+
+      }
+    );
+
+    wishButton.addEventListener(
+      "contextmenu",
+      event => {
+        event.preventDefault();
+      }
+    );
+
+
+    /* =========================================================
+       PRAYER
+    ========================================================= */
+
+    const prayerButton =
+      document.getElementById(
+        "prayerButton"
+      );
+
+    const prayerModal =
+      document.getElementById(
+        "prayerModal"
+      );
+
+    const prayerText =
+      document.getElementById(
+        "prayerText"
+      );
+
+    const modalClose =
+      document.getElementById(
+        "modalClose"
+      );
+
+    const finalMark =
+      document.getElementById(
+        "finalMark"
+      );
+
+
+    function buildPrayer() {
+
+      prayerText.innerHTML = "";
+
+      CONFIG.prayer.forEach(
+        paragraph => {
+
+          const p =
+            document.createElement(
+              "p"
+            );
+
+          p.textContent =
+            paragraph.replace(
+              "{{name}}",
+              CONFIG.name
+            );
+
+          prayerText.appendChild(
+            p
+          );
+
+        }
+      );
+
+    }
+
+
+    buildPrayer();
+
+
+    /* =========================================================
+       PRAYER CONFETTI
+       
+       This is intentionally a short birthday burst when
+       the prayer opens. After that, the experience becomes
+       quiet again for the actual blessing.
+    ========================================================= */
+
+    const confettiCanvas =
+      document.getElementById(
+        "confettiCanvas"
+      );
+
+    const confettiCtx =
+      confettiCanvas.getContext("2d");
+
+    let confettiParticles = [];
+    let confettiAnimation = null;
+
+
+    function resizeConfettiCanvas() {
+
+      const dpr =
+        Math.min(
+          window.devicePixelRatio || 1,
+          2
+        );
+
+      confettiCanvas.width =
+        window.innerWidth * dpr;
+
+      confettiCanvas.height =
+        window.innerHeight * dpr;
+
+      confettiCanvas.style.width =
+        window.innerWidth + "px";
+
+      confettiCanvas.style.height =
+        window.innerHeight + "px";
+
+      confettiCtx.setTransform(
+        dpr,
+        0,
+        0,
+        dpr,
+        0,
+        0
+      );
+
+    }
+
+
+    function launchPrayerConfetti() {
+
+      confettiParticles = [];
+
+      const centerX =
+        window.innerWidth / 2;
+
+      const centerY =
+        Math.min(
+          window.innerHeight * .34,
+          280
+        );
+
+      const pieces =
+        window.innerWidth < 600
+          ? 65
+          : 95;
+
+      for (
+        let i = 0;
+        i < pieces;
+        i++
+      ) {
+
+        const angle =
+          Math.random() *
+          Math.PI *
+          2;
+
+        const speed =
+          2.2 +
+          Math.random() *
+          5;
+
+        confettiParticles.push({
+
+          x:
+            centerX +
+            (Math.random() - .5) *
+            70,
+
+          y:
+            centerY +
+            (Math.random() - .5) *
+            30,
+
+          vx:
+            Math.cos(angle) *
+            speed,
+
+          vy:
+            Math.sin(angle) *
+            speed -
+            2.2,
+
+          gravity:
+            .075 +
+            Math.random() * .055,
+
+          drag:
+            .985,
+
+          width:
+            3 +
+            Math.random() * 5,
+
+          height:
+            5 +
+            Math.random() * 8,
+
+          rotation:
+            Math.random() *
+            Math.PI * 2,
+
+          rotationSpeed:
+            (Math.random() - .5) *
+            .18,
+
+          life:
+            1,
+
+          decay:
+            .008 +
+            Math.random() * .007,
+
+          type:
+            Math.random() > .25
+              ? "rect"
+              : "circle"
+
+        });
+
+      }
+
+      if (confettiAnimation) {
+        cancelAnimationFrame(
+          confettiAnimation
+        );
+      }
+
+      drawPrayerConfetti();
+
+    }
+
+
+    function drawPrayerConfetti() {
+
+      confettiCtx.clearRect(
+        0,
+        0,
+        window.innerWidth,
+        window.innerHeight
+      );
+
+      let alive = false;
+
+      confettiParticles.forEach(
+        particle => {
+
+          if (
+            particle.life <= 0
+          ) {
+            return;
+          }
+
+          alive = true;
+
+          particle.vx *=
+            particle.drag;
+
+          particle.vy +=
+            particle.gravity;
+
+          particle.x +=
+            particle.vx;
+
+          particle.y +=
+            particle.vy;
+
+          particle.rotation +=
+            particle.rotationSpeed;
+
+          particle.life -=
+            particle.decay;
+
+          confettiCtx.save();
+
+          confettiCtx.translate(
+            particle.x,
+            particle.y
+          );
+
+          confettiCtx.rotate(
+            particle.rotation
+          );
+
+          confettiCtx.globalAlpha =
+            Math.max(
+              0,
+              particle.life
+            );
+
+          /*
+            Keep the palette tied to the birthday
+            experience rather than using random rainbow
+            colors.
+          */
+
+          const gold =
+            Math.random() > .48;
+
+          confettiCtx.fillStyle =
+            gold
+              ? "#F3C66B"
+              : "#E9D5FF";
+
+          if (
+            particle.type === "circle"
+          ) {
+
+            confettiCtx.beginPath();
+
+            confettiCtx.arc(
+              0,
+              0,
+              particle.width,
+              0,
+              Math.PI * 2
+            );
+
+            confettiCtx.fill();
+
+          } else {
+
+            confettiCtx.fillRect(
+              -particle.width / 2,
+              -particle.height / 2,
+              particle.width,
+              particle.height
+            );
+
+          }
+
+          confettiCtx.restore();
+
+        }
+      );
+
+      if (alive) {
+
+        confettiAnimation =
+          requestAnimationFrame(
+            drawPrayerConfetti
+          );
+
+      } else {
+
+        confettiCtx.clearRect(
+          0,
+          0,
+          window.innerWidth,
+          window.innerHeight
+        );
+
+        confettiAnimation =
+          null;
+
+      }
+
+    }
+
+
+    resizeConfettiCanvas();
+
+
+    prayerButton.addEventListener(
+      "click",
+      () => {
+
+        prayerModal.classList.add(
+          "is-open"
+        );
+
+        prayerText.classList.remove(
+          "revealing"
+        );
+
+        const lines =
+          prayerText.querySelectorAll(
+            "p"
+          );
+
+        lines.forEach(
+          (line, index) => {
+
+            line.style.animationDelay =
+              `${220 + index * 105}ms`;
+
+          }
+        );
+
+        /*
+          Birthday celebration first.
+          Then the prayer quietly reveals.
+        */
+
+        launchPrayerConfetti();
+
+        requestAnimationFrame(
+          () => {
+
+            prayerText.classList.add(
+              "revealing"
+            );
+
+          }
+        );
+
+        if (
+          navigator.vibrate
+        ) {
+          navigator.vibrate(12);
+        }
+
+      }
+    );
+
+
+    modalClose.addEventListener(
+      "click",
+      closePrayer
+    );
+
+
+    function closePrayer() {
+
+      prayerModal.classList.remove(
+        "is-open"
+      );
+
+      setTimeout(
+        () => {
+
+          finalMark.classList.add(
+            "settled"
+          );
+
+        },
+        550
+      );
+
+    }
+
+
+    prayerModal.addEventListener(
+      "click",
+      event => {
+
+        if (
+          event.target ===
+          prayerModal
+        ) {
+
+          closePrayer();
+
+        }
+
+      }
+    );
+
+
+    /* =========================================================
+       NATURAL SCROLL REVEALS
+    ========================================================= */
+
+    const revealObserver =
+      new IntersectionObserver(
+        entries => {
+
+          entries.forEach(
+            entry => {
+
+              if (
+                entry.isIntersecting
+              ) {
+
+                entry.target.classList.add(
+                  "visible"
+                );
+
+              }
+
+            }
+          );
+
+        },
+        {
+          threshold: .15,
+          rootMargin:
+            "0px 0px -8% 0px"
+        }
+      );
+
+
+    document
+      .querySelectorAll(
+        ".reveal"
+      )
+      .forEach(
+        element => {
+
+          revealObserver.observe(
+            element
+          );
+
+        }
+      );
+
+
+    /* =========================================================
+       CHAPTER TRACKING
+    ========================================================= */
+
+    const chapters = [
+      document.getElementById("chapterHero"),
+      document.getElementById("chapterMemories"),
+      document.getElementById("chapterLetter"),
+      document.getElementById("chapterWish"),
+      document.getElementById("chapterFinal")
+    ];
+
+    const chapterCues =
+      [
+        ...document.querySelectorAll(
+          ".chapter-cue"
+        )
+      ];
+
+
+    const chapterObserver =
+      new IntersectionObserver(
+        entries => {
+
+          entries.forEach(
+            entry => {
+
+              if (
+                entry.isIntersecting
+              ) {
+
+                const index =
+                  Number(
+                    entry.target.dataset.chapter
+                  );
+
+                chapterCues.forEach(
+                  (cue, cueIndex) => {
+
+                    cue.classList.toggle(
+                      "active",
+                      cueIndex === index
+                    );
+
+                  }
+                );
+
+              }
+
+            }
+          );
+
+        },
+        {
+          threshold: .45
+        }
+      );
+
+
+    chapters.forEach(
+      chapter => {
+
+        if (chapter) {
+          chapterObserver.observe(
+            chapter
+          );
+        }
+
+      }
+    );
+
+
+    /* =========================================================
+       48 OPENING MOMENT
+    ========================================================= */
+
+    function showBirthday48Moment() {
+
+      if (
+        window.matchMedia(
+          "(prefers-reduced-motion: reduce)"
+        ).matches
+      ) {
+        return;
+      }
+
+      birthday48Intro.classList.add(
+        "is-showing"
+      );
+
+      birthday48Intro.setAttribute(
+        "aria-hidden",
+        "false"
+      );
+
+      setTimeout(
+        () => {
+
+          birthday48Intro.style.transition =
+            "opacity .65s ease";
+
+          birthday48Intro.style.opacity =
+            "0";
+
+        },
+        1900
+      );
+
+      setTimeout(
+        () => {
+
+          birthday48Intro.classList.remove(
+            "is-showing"
+          );
+
+          birthday48Intro.style.opacity =
+            "";
+
+          birthday48Intro.style.transition =
+            "";
+
+          birthday48Intro.setAttribute(
+            "aria-hidden",
+            "true"
+          );
+
+        },
+        2600
+      );
+
+    }
+
+
+    /* =========================================================
+       ENVELOPE OPENING
+    ========================================================= */
+
+    let envelopeOpened =
+      false;
+
+
+    function openEnvelope() {
+
+      if (
+        envelopeOpened ||
+        !envelope
+      ) {
+        return;
+      }
+
+      envelopeOpened =
+        true;
+
+      envelopeHint.textContent =
+        "Opening…";
+
+      envelopeScreen.classList.add(
+        "is-celebrating"
+      );
+
+      showBirthday48Moment();
+
+      /*
+        Start music directly from the tap.
+      */
+
+      playBirthdayMusic();
+
+
+      /*
+        STEP 1
+        Seal lifts away.
+      */
+
+      waxSeal.animate(
+        [
+          {
+            transform:
+              "translate(-50%,-50%) scale(1)",
+            opacity: 1
+          },
+          {
+            transform:
+              "translate(-50%,-72%) scale(.82)",
+            opacity: 0
+          }
+        ],
+        {
+          duration: 450,
+          easing:
+            "cubic-bezier(.55,.055,.675,.19)",
+          fill: "forwards"
+        }
+      );
+
+
+      /*
+        STEP 2
+        Flap opens.
+      */
+
+      setTimeout(
+        () => {
+
+          envelopeFlap.animate(
+            [
+              {
+                transform:
+                  "rotateX(0deg)"
+              },
+              {
+                transform:
+                  "rotateX(-175deg)"
+              }
+            ],
+            {
+              duration: 850,
+              easing:
+                "cubic-bezier(.77,0,.175,1)",
+              fill: "forwards"
+            }
+          );
+
+        },
+        300
+      );
+
+
+      /*
+        STEP 3
+        Paper rises.
+      */
+
+      setTimeout(
+        () => {
+
+          envelopePaper.style.zIndex =
+            "8";
+
+          envelopePaper.style.visibility =
+            "visible";
+
+          envelopePaper.style.pointerEvents =
+            "auto";
+
+          envelopePaper.animate(
+            [
+              {
+                transform:
+                  "translateY(38%) scale(.96)",
+                opacity: 0
+              },
+              {
+                transform:
+                  "translateY(18%) scale(.97)",
+                opacity: 0
+              },
+              {
+                transform:
+                  "translateY(4%) scale(.985)",
+                opacity: 1,
+                offset: .42
+              },
+              {
+                transform:
+                  "translateY(-58%) scale(1)",
+                opacity: 1
+              }
+            ],
+            {
+              duration: 1350,
+              easing:
+                "cubic-bezier(.22,.61,.36,1)",
+              fill: "forwards"
+            }
+          );
+
+        },
+        900
+      );
+
+
+      /*
+        STEP 4
+        Let the note hang.
+      */
+
+      setTimeout(
+        () => {
+
+          envelope.animate(
+            [
+              {
+                transform:
+                  "scale(1) translateY(0)"
+              },
+              {
+                transform:
+                  "scale(1.06) translateY(-8px)"
+              }
+            ],
+            {
+              duration: 550,
+              easing:
+                "cubic-bezier(.22,.61,.36,1)",
+              fill: "forwards"
+            }
+          );
+
+        },
+        2250
+      );
+
+
+      /*
+        STEP 5
+        Envelope disappears.
+      */
+
+      setTimeout(
+        () => {
+
+          envelopeScreen.animate(
+            [
+              {
+                opacity: 1
+              },
+              {
+                opacity: 0
+              }
+            ],
+            {
+              duration: 700,
+              easing:
+                "ease-in-out",
+              fill: "forwards"
+            }
+          );
+
+          setTimeout(
+            () => {
+
+              envelopeScreen.style.display =
+                "none";
+
+              document.body.classList.remove(
+                "locked"
+              );
+
+              window.scrollTo(
+                0,
+                0
+              );
+
+              setTimeout(
+                () => {
+
+                  document
+                    .querySelectorAll(
+                      ".reveal"
+                    )
+                    .forEach(
+                      element =>
+                        element.classList.add(
+                          "visible"
+                        )
+                    );
+
+                },
+                120
+              );
+
+            },
+            750
+          );
+
+        },
+        2850
+      );
+
+    }
+
+
+    envelope.addEventListener(
+      "click",
+      openEnvelope
+    );
+
+
+    envelope.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key === "Enter" ||
+          event.key === " "
+        ) {
+
+          event.preventDefault();
+
+          openEnvelope();
+
+        }
+
+      }
+    );
+
+
+    /* =========================================================
+       KEYBOARD CONTROLS
+    ========================================================= */
+
+    document.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key === "Escape"
+        ) {
+
+          if (
+            memoryViewerOpen
+          ) {
+
+            closeMemoryViewer();
+            return;
+
+          }
+
+          if (
+            prayerModal.classList.contains(
+              "is-open"
+            )
+          ) {
+
+            closePrayer();
+            return;
+
+          }
+
+        }
+
+        if (
+          memoryViewerOpen
+        ) {
+
+          if (
+            event.key === "ArrowRight"
+          ) {
+
+            viewerNextMemory();
+
+          }
+
+          if (
+            event.key === "ArrowLeft"
+          ) {
+
+            viewerPreviousMemory();
+
+          }
+
+        }
+
+      }
+    );
+
+
+    /* =========================================================
+       RESIZE
+    ========================================================= */
+
+    window.addEventListener(
+      "resize",
+      () => {
+
+        resizeAmbientCanvas();
+        resizeConfettiCanvas();
+
+      }
+    );
+
+  </script>
+
+</body>
+</html>
