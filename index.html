@@ -3901,9 +3901,6 @@
         "wishButtonLabel"
       );
 
-    const OPEN_STATE_KEY =
-      "birthday-page-opened";
-
     const wishStatus =
       document.getElementById(
         "wishStatus"
@@ -4909,37 +4906,6 @@
       false;
 
 
-    function restoreOpenedState() {
-
-      if (
-        sessionStorage.getItem(
-          OPEN_STATE_KEY
-        ) === "opened"
-      ) {
-
-        envelopeOpened = true;
-        envelopeScreen.style.display = "none";
-        document.body.classList.remove("locked");
-        document.body.style.overflow = "auto";
-
-        window.scrollTo(0, 0);
-
-        document
-          .querySelectorAll(
-            ".reveal"
-          )
-          .forEach(
-            element =>
-              element.classList.add(
-                "visible"
-              )
-          );
-
-      }
-
-    }
-
-
     function openEnvelope() {
 
       if (
@@ -4951,18 +4917,6 @@
 
       envelopeOpened =
         true;
-
-      try {
-        sessionStorage.setItem(
-          OPEN_STATE_KEY,
-          "opened"
-        );
-      } catch (error) {
-        console.warn(
-          "Could not persist envelope state:",
-          error
-        );
-      }
 
       envelopeHint.textContent =
         "Opening…";
@@ -5196,26 +5150,12 @@
     }
 
 
-    restoreOpenedState();
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration =
+        "manual";
+    }
 
-    window.addEventListener(
-      "pageshow",
-      () => {
-        restoreOpenedState();
-      }
-    );
-
-    document.addEventListener(
-      "visibilitychange",
-      () => {
-        if (
-          document.visibilityState === "visible"
-          && sessionStorage.getItem(OPEN_STATE_KEY) === "opened"
-        ) {
-          restoreOpenedState();
-        }
-      }
-    );
+    window.scrollTo(0, 0);
 
     envelope.addEventListener(
       "click",
