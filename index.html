@@ -1657,6 +1657,69 @@
         display: none !important;
       }
     }
+    /* ...all your existing CSS... */
+
+
+/* =========================================================
+   DESKTOP ALIGNMENT FIX
+   Keeps the mobile design untouched.
+========================================================= */
+
+@media (min-width: 900px) {
+
+  .story-chapter .chapter-inner {
+    width: min(100%, 1100px);
+    margin-left: auto;
+    margin-right: auto;
+    transform: none !important;
+  }
+
+  .hero .chapter-inner {
+    width: min(100%, 900px);
+    transform: none !important;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #chapterMemories .chapter-inner {
+    width: min(100%, 1100px);
+    transform: none !important;
+  }
+
+  #chapterMemories .memory-stage {
+    transform: none !important;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #chapterMemories .memory-meta,
+  #chapterMemories .memory-progress,
+  #chapterMemories .memory-hint {
+    transform: none !important;
+  }
+
+  .letter-shell {
+    width: min(100%, 760px);
+    margin-left: auto;
+    margin-right: auto;
+    transform: none !important;
+  }
+
+  .wish-wrap {
+    width: min(100%, 650px);
+    margin-left: auto;
+    margin-right: auto;
+    transform: none !important;
+  }
+
+  .final-chapter .chapter-inner {
+    width: min(100%, 900px);
+    margin-left: auto;
+    margin-right: auto;
+    transform: none !important;
+  }
+
+}
   </style>
 </head>
 
